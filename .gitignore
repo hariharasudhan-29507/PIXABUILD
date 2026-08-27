@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# PixaBuild large data folders
+data/
+catalog/images/
+models/
+outputs/
+
 # Distribution / packaging
 .Python
 build/
