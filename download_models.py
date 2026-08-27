@@ -1,5 +1,6 @@
 import os
 import urllib.request
+import ssl
 from diffusers import StableDiffusionInpaintPipeline, ControlNetModel
 from transformers import pipeline
 import torch
@@ -10,12 +11,23 @@ def download_sam():
     sam_dir = os.path.join(CACHE_DIR, "sam")
     os.makedirs(sam_dir, exist_ok=True)
     sam_path = os.path.join(sam_dir, "sam_vit_b_01ec64.pth")
+    
     if os.path.exists(sam_path):
         print("SAM checkpoint already exists.")
         return sam_path
+    
     url = "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth"
     print(f"Downloading SAM checkpoint to {sam_path} ...")
-    urllib.request.urlretrieve(url, sam_path)
+    
+    # Fix SSL certificate verification error on Windows
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    
+    with urllib.request.urlopen(url, context=ssl_context) as response:
+        with open(sam_path, 'wb') as out_file:
+            out_file.write(response.read())
+    
     print("SAM download complete.")
     return sam_path
 
