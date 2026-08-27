@@ -1,0 +1,14 @@
+{
+    "sofa_01": {
+        "name": "Modern Gray Sofa",
+        "category": "sofa",
+        "price": 499.99,
+        "image": "catalog/images/sofa_01.jpg"
+    },
+    "chair_01": {
+        "name": "Wooden Dining Chair",
+        "category": "chair",
+        "price": 89.99,
+        "image": "catalog/images/chair_01.jpg"
+    }
+}
