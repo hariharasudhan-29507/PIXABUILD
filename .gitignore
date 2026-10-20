@@ -1,3 +1,7 @@
+# Never ignore frontend source code
+!frontend/src/data/
+!frontend/src/lib/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -7,21 +11,21 @@ __pycache__/
 *.so
 
 # PixaBuild large data folders
-data/
+/data/
 catalog/images/
 models/
 outputs/
 
 # Distribution / packaging
 .Python
-build/
+/build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
