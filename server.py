@@ -133,6 +133,23 @@ ROOMS_DB = [
     },
 ]
 
+@app.get("/")
+def root_index():
+    return {
+        "service": "PixaBuild Multimodal Spatial API",
+        "status": "online",
+        "version": "2.0.0",
+        "documentation": "/docs",
+        "health": "/health",
+        "endpoints": {
+            "catalog": "/api/catalog",
+            "rooms": "/api/rooms",
+            "generate": "POST /api/generate",
+            "depth": "POST /api/depth",
+            "segment": "POST /api/segment"
+        }
+    }
+
 @app.get("/health")
 def health_check():
     return {
