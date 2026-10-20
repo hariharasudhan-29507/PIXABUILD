@@ -221,7 +221,8 @@ function VisualizerContent() {
           formData.append("room_file", blob, "room.jpg");
         }
 
-        const apiRes = await fetch("http://localhost:8000/api/generate", {
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const apiRes = await fetch(`${API_BASE}/api/generate`, {
           method: "POST",
           body: formData,
         });
