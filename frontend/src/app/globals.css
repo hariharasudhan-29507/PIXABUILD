@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fjalla+One&family=Lexend:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Warm Restrained Scandinavian Luxury Palette */
+  --color-warm-ivory: #F7F5F0;       /* Main background */
+  --color-sand-beige: #E6DFD2;       /* Cards & secondary surfaces */
+  --color-muted-taupe: #8C7965;      /* Secondary accents */
+  --color-forest-charcoal: #30352D;  /* Headings & text */
+  --color-sage-green: #78816A;       /* Primary buttons & accents */
+  --color-terracotta: #B96E4B;       /* Sale highlights */
+  --color-white: #FFFFFF;
+  --border-subtle: rgba(48, 53, 45, 0.12);
+  --border-strong: rgba(48, 53, 45, 0.24);
+
+  /* Semantic UI Tokens */
+  --bg-canvas: #F7F5F0;
+  --bg-surface: #E6DFD2;
+  --bg-card: #FFFFFF;
+  --text-primary: #30352D;
+  --text-secondary: #8C7965;
+  --accent-primary: #78816A;
+  --accent-hover: #656D57;
+  --accent-highlight: #B96E4B;
+
+  /* Typography Stacks */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-heading: 'Fjalla One', 'Cormorant Garamond', sans-serif;
+  --font-sub: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Comfortaa', cursive, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sub);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial Serif Headings */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+.font-body {
+  font-family: var(--font-sub);
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+/* Button & interactive tactile feedback */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  background-color: var(--color-forest-charcoal);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background-color: #1E221C;
+  transform: translateY(-1px);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-forest-charcoal);
+  outline-offset: 2px;
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-forest-charcoal);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  background-color: var(--color-sand-beige);
+  border-color: var(--color-forest-charcoal);
+}
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-sage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  border-radius: 6px;
+  background-color: var(--color-sage-green);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms ease-out;
+  text-decoration: none;
+}
+.btn-sage:hover {
+  background-color: var(--accent-hover);
+}
+.btn-sage:active {
+  transform: scale(0.98);
+}
+
+.btn-terracotta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  border-radius: 6px;
+  background-color: var(--color-terracotta);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms ease-out;
+  text-decoration: none;
+}
+.btn-terracotta:hover {
+  filter: brightness(1.08);
+}
+.btn-terracotta:active {
+  transform: scale(0.98);
+}
+
+/* Card standards */
+.pixa-card {
+  background-color: var(--color-sand-beige);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+.pixa-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-warm-ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-taupe);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-forest-charcoal);
+}

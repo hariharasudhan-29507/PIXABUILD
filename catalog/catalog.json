@@ -1,0 +1,182 @@
+{
+  "ikea-sofa-1": {
+    "name": "IKEA Sofa 100",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_1.jpg"
+  },
+  "ikea-sofa-2": {
+    "name": "IKEA Sofa 200",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_2.jpg"
+  },
+  "ikea-sofa-3": {
+    "name": "IKEA Sofa 300",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_3.jpg"
+  },
+  "ikea-sofa-4": {
+    "name": "IKEA Sofa 400",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_4.jpg"
+  },
+  "ikea-sofa-5": {
+    "name": "IKEA Sofa 500",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_5.jpg"
+  },
+  "ikea-sofa-6": {
+    "name": "IKEA Sofa 600",
+    "category": "Sofa",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_6.jpg"
+  },
+  "ikea-coffee_table-1": {
+    "name": "IKEA Coffee Table 100",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_1.jpg"
+  },
+  "ikea-coffee_table-2": {
+    "name": "IKEA Coffee Table 200",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_2.jpg"
+  },
+  "ikea-coffee_table-3": {
+    "name": "IKEA Coffee Table 300",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_3.jpg"
+  },
+  "ikea-coffee_table-4": {
+    "name": "IKEA Coffee Table 400",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_4.jpg"
+  },
+  "ikea-coffee_table-5": {
+    "name": "IKEA Coffee Table 500",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_5.jpg"
+  },
+  "ikea-coffee_table-6": {
+    "name": "IKEA Coffee Table 600",
+    "category": "Coffee Table",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_6.jpg"
+  },
+  "ikea-display_cabinet-1": {
+    "name": "IKEA Display Cabinet 100",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_1.jpg"
+  },
+  "ikea-display_cabinet-2": {
+    "name": "IKEA Display Cabinet 200",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_2.jpg"
+  },
+  "ikea-display_cabinet-3": {
+    "name": "IKEA Display Cabinet 300",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_3.jpg"
+  },
+  "ikea-display_cabinet-4": {
+    "name": "IKEA Display Cabinet 400",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_4.jpg"
+  },
+  "ikea-display_cabinet-5": {
+    "name": "IKEA Display Cabinet 500",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_5.jpg"
+  },
+  "ikea-display_cabinet-6": {
+    "name": "IKEA Display Cabinet 600",
+    "category": "Display Cabinet",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_6.jpg"
+  },
+  "ikea-dining_chair-1": {
+    "name": "IKEA Dining Chair 100",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_1.jpg"
+  },
+  "ikea-dining_chair-2": {
+    "name": "IKEA Dining Chair 200",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_2.jpg"
+  },
+  "ikea-dining_chair-3": {
+    "name": "IKEA Dining Chair 300",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_3.jpg"
+  },
+  "ikea-dining_chair-4": {
+    "name": "IKEA Dining Chair 400",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_4.jpg"
+  },
+  "ikea-dining_chair-5": {
+    "name": "IKEA Dining Chair 500",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_5.jpg"
+  },
+  "ikea-dining_chair-6": {
+    "name": "IKEA Dining Chair 600",
+    "category": "Dining Chair",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_6.jpg"
+  },
+  "ikea-bed_frame-1": {
+    "name": "IKEA Bed Frame 100",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_1.jpg"
+  },
+  "ikea-bed_frame-2": {
+    "name": "IKEA Bed Frame 200",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_2.jpg"
+  },
+  "ikea-bed_frame-3": {
+    "name": "IKEA Bed Frame 300",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_3.jpg"
+  },
+  "ikea-bed_frame-4": {
+    "name": "IKEA Bed Frame 400",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_4.jpg"
+  },
+  "ikea-bed_frame-5": {
+    "name": "IKEA Bed Frame 500",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_5.jpg"
+  },
+  "ikea-bed_frame-6": {
+    "name": "IKEA Bed Frame 600",
+    "category": "Bed Frame",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_6.jpg"
+  },
+  "ikea-office_desk-1": {
+    "name": "IKEA Office Desk 100",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_1.jpg"
+  },
+  "ikea-office_desk-2": {
+    "name": "IKEA Office Desk 200",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_2.jpg"
+  },
+  "ikea-office_desk-3": {
+    "name": "IKEA Office Desk 300",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_3.jpg"
+  },
+  "ikea-office_desk-4": {
+    "name": "IKEA Office Desk 400",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_4.jpg"
+  },
+  "ikea-office_desk-5": {
+    "name": "IKEA Office Desk 500",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_5.jpg"
+  },
+  "ikea-office_desk-6": {
+    "name": "IKEA Office Desk 600",
+    "category": "Office Desk",
+    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_6.jpg"
+  }
+}

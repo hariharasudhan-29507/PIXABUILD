@@ -222,3 +222,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+ikea_dataset_repo/
+frontend/.next/
+frontend/node_modules/
