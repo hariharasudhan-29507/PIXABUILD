@@ -13,6 +13,13 @@ class DepthEstimator:
         self._load_model()
 
     def _load_model(self):
+        # Only attempt to load large Hugging Face weights if explicitly enabled and GPU is available
+        enable_heavy = os.getenv("ENABLE_NEURAL_MODELS", "false").lower() == "true"
+        if not enable_heavy:
+            print("[DepthAnything] Low-memory mode active (< 50MB RAM). Using spatial gradient engine.")
+            self.pipe = None
+            return
+
         try:
             from transformers import pipeline
             import torch
