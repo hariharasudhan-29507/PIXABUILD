@@ -17,7 +17,7 @@ const ARTICLES = [
     category: "Spatial Theory",
     readTime: "4 min read",
     snippet: "Why pushing all furniture against the wall makes rooms feel smaller, and how floating conversational clusters create calm architectural flow.",
-    img: "/sample_rooms/sample_room_1.jpg",
+    img: "/rooms/living_01.jpg",
   },
   {
     id: "natural-oak-care",
@@ -33,7 +33,7 @@ const ARTICLES = [
     category: "Compact Living",
     readTime: "5 min read",
     snippet: "Using unified color temperatures and elevated leg heights to preserve sightlines and create visual breathability in urban spaces.",
-    img: "/sample_rooms/sample_room_2.jpg",
+    img: "/rooms/living_02.jpg",
   },
 ];
 

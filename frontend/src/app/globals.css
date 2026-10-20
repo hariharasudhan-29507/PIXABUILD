@@ -2,26 +2,32 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm Restrained Scandinavian Luxury Palette */
-  --color-warm-ivory: #F7F5F0;       /* Main background */
-  --color-sand-beige: #E6DFD2;       /* Cards & secondary surfaces */
-  --color-muted-taupe: #8C7965;      /* Secondary accents */
-  --color-forest-charcoal: #30352D;  /* Headings & text */
-  --color-sage-green: #78816A;       /* Primary buttons & accents */
-  --color-terracotta: #B96E4B;       /* Sale highlights */
+  /* Warm Restrained Scandinavian Luxury Palette (Awwwards Creative Spec) */
+  --color-warm-ivory: #F6F3ED;       /* Main background */
+  --color-chalk-white: #FCFBF8;      /* Clean card and surface highlights */
+  --color-sandstone: #E5DDD0;        /* Secondary panels and shelves */
+  --color-sand-beige: #E5DDD0;       /* Backward compatibility */
+  --color-muted-taupe: #8A7867;      /* Secondary accents and metadata */
+  --color-deep-charcoal: #292B26;    /* High contrast text and structural lines */
+  --color-forest-charcoal: #292B26;  /* Backward compatibility */
+  --color-forest-olive: #42483A;     /* Primary interactive accent */
+  --color-sage-green: #818773;       /* Secondary botanical tone */
+  --color-sage: #818773;
+  --color-terracotta: #B8795C;       /* Warm architectural highlight */
   --color-white: #FFFFFF;
-  --border-subtle: rgba(48, 53, 45, 0.12);
-  --border-strong: rgba(48, 53, 45, 0.24);
+  --border-subtle: #DCD6CB;
+  --border-fine: #DCD6CB;
+  --border-strong: rgba(41, 43, 38, 0.28);
 
   /* Semantic UI Tokens */
-  --bg-canvas: #F7F5F0;
-  --bg-surface: #E6DFD2;
-  --bg-card: #FFFFFF;
-  --text-primary: #30352D;
-  --text-secondary: #8C7965;
-  --accent-primary: #78816A;
-  --accent-hover: #656D57;
-  --accent-highlight: #B96E4B;
+  --bg-canvas: #F6F3ED;
+  --bg-surface: #E5DDD0;
+  --bg-card: #FCFBF8;
+  --text-primary: #292B26;
+  --text-secondary: #8A7867;
+  --accent-primary: #42483A;
+  --accent-hover: #33382D;
+  --accent-highlight: #B8795C;
 
   /* Typography Stacks */
   --font-serif: 'Cormorant Garamond', Georgia, serif;

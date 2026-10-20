@@ -1,182 +1,218 @@
 {
-  "ikea-sofa-1": {
-    "name": "IKEA Sofa 100",
+  "pixa-sofa-1": {
+    "name": "Astrid Textured Linen 3-Seat Sofa",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_1.jpg"
+    "image": "frontend/public/catalog/sofa_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_1.png"
   },
-  "ikea-sofa-2": {
-    "name": "IKEA Sofa 200",
+  "pixa-sofa-2": {
+    "name": "S\u00f6der Low-Profile Modular Sofa",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_2.jpg"
+    "image": "frontend/public/catalog/sofa_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_2.png"
   },
-  "ikea-sofa-3": {
-    "name": "IKEA Sofa 300",
+  "pixa-sofa-3": {
+    "name": "P\u00e4rup Architectural Loveseat",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_3.jpg"
+    "image": "frontend/public/catalog/sofa_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_3.png"
   },
-  "ikea-sofa-4": {
-    "name": "IKEA Sofa 400",
+  "pixa-sofa-4": {
+    "name": "Ektorp Deep Curved Armchair",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_4.jpg"
+    "image": "frontend/public/catalog/sofa_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_4.png"
   },
-  "ikea-sofa-5": {
-    "name": "IKEA Sofa 500",
+  "pixa-sofa-5": {
+    "name": "Vimle Lowline Chaise Sectional",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_5.jpg"
+    "image": "frontend/public/catalog/sofa_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_5.png"
   },
-  "ikea-sofa-6": {
-    "name": "IKEA Sofa 600",
+  "pixa-sofa-6": {
+    "name": "Gr\u00f6nlid Reclining Sectional Sofa",
     "category": "Sofa",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/sofa_6.jpg"
+    "image": "frontend/public/catalog/sofa_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_6.png"
   },
-  "ikea-coffee_table-1": {
-    "name": "IKEA Coffee Table 100",
+  "pixa-coffee_table-1": {
+    "name": "Lack Minimalist Low Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_1.jpg"
+    "image": "frontend/public/catalog/coffee_table_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_1.png"
   },
-  "ikea-coffee_table-2": {
-    "name": "IKEA Coffee Table 200",
+  "pixa-coffee_table-2": {
+    "name": "Havsta Hand-Stained Pine Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_2.jpg"
+    "image": "frontend/public/catalog/coffee_table_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_2.png"
   },
-  "ikea-coffee_table-3": {
-    "name": "IKEA Coffee Table 300",
+  "pixa-coffee_table-3": {
+    "name": "Lisabo Sculptural Ash Coffee Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_3.jpg"
+    "image": "frontend/public/catalog/coffee_table_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_3.png"
   },
-  "ikea-coffee_table-4": {
-    "name": "IKEA Coffee Table 400",
+  "pixa-coffee_table-4": {
+    "name": "Hemnes Storage Timber Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_4.jpg"
+    "image": "frontend/public/catalog/coffee_table_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_4.png"
   },
-  "ikea-coffee_table-5": {
-    "name": "IKEA Coffee Table 500",
+  "pixa-coffee_table-5": {
+    "name": "Fj\u00e4llbo Industrial Oak Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_5.jpg"
+    "image": "frontend/public/catalog/coffee_table_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_5.png"
   },
-  "ikea-coffee_table-6": {
-    "name": "IKEA Coffee Table 600",
+  "pixa-coffee_table-6": {
+    "name": "Kragsta Circular Nesting Table",
     "category": "Coffee Table",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/coffee_table_6.jpg"
+    "image": "frontend/public/catalog/coffee_table_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_6.png"
   },
-  "ikea-display_cabinet-1": {
-    "name": "IKEA Display Cabinet 100",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_1.jpg"
-  },
-  "ikea-display_cabinet-2": {
-    "name": "IKEA Display Cabinet 200",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_2.jpg"
-  },
-  "ikea-display_cabinet-3": {
-    "name": "IKEA Display Cabinet 300",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_3.jpg"
-  },
-  "ikea-display_cabinet-4": {
-    "name": "IKEA Display Cabinet 400",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_4.jpg"
-  },
-  "ikea-display_cabinet-5": {
-    "name": "IKEA Display Cabinet 500",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_5.jpg"
-  },
-  "ikea-display_cabinet-6": {
-    "name": "IKEA Display Cabinet 600",
-    "category": "Display Cabinet",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/display_cabinet_6.jpg"
-  },
-  "ikea-dining_chair-1": {
-    "name": "IKEA Dining Chair 100",
+  "pixa-dining_chair-1": {
+    "name": "Ingolf Solid Timber Dining Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_1.jpg"
+    "image": "frontend/public/catalog/dining_chair_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_1.png"
   },
-  "ikea-dining_chair-2": {
-    "name": "IKEA Dining Chair 200",
+  "pixa-dining_chair-2": {
+    "name": "Bergmund Tailored Linen Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_2.jpg"
+    "image": "frontend/public/catalog/dining_chair_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_2.png"
   },
-  "ikea-dining_chair-3": {
-    "name": "IKEA Dining Chair 300",
+  "pixa-dining_chair-3": {
+    "name": "Stefan Minimal Solid Pine Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_3.jpg"
+    "image": "frontend/public/catalog/dining_chair_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_3.png"
   },
-  "ikea-dining_chair-4": {
-    "name": "IKEA Dining Chair 400",
+  "pixa-dining_chair-4": {
+    "name": "Ekedalen Solid Oak Dining Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_4.jpg"
+    "image": "frontend/public/catalog/dining_chair_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_4.png"
   },
-  "ikea-dining_chair-5": {
-    "name": "IKEA Dining Chair 500",
+  "pixa-dining_chair-5": {
+    "name": "Tobias Translucent Sculptural Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_5.jpg"
+    "image": "frontend/public/catalog/dining_chair_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_5.png"
   },
-  "ikea-dining_chair-6": {
-    "name": "IKEA Dining Chair 600",
+  "pixa-dining_chair-6": {
+    "name": "Volfgang Chrome Base Chair",
     "category": "Dining Chair",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/dining_chair_6.jpg"
+    "image": "frontend/public/catalog/dining_chair_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_6.png"
   },
-  "ikea-bed_frame-1": {
-    "name": "IKEA Bed Frame 100",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_1.jpg"
-  },
-  "ikea-bed_frame-2": {
-    "name": "IKEA Bed Frame 200",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_2.jpg"
-  },
-  "ikea-bed_frame-3": {
-    "name": "IKEA Bed Frame 300",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_3.jpg"
-  },
-  "ikea-bed_frame-4": {
-    "name": "IKEA Bed Frame 400",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_4.jpg"
-  },
-  "ikea-bed_frame-5": {
-    "name": "IKEA Bed Frame 500",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_5.jpg"
-  },
-  "ikea-bed_frame-6": {
-    "name": "IKEA Bed Frame 600",
-    "category": "Bed Frame",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/bed_frame_6.jpg"
-  },
-  "ikea-office_desk-1": {
-    "name": "IKEA Office Desk 100",
+  "pixa-office_desk-1": {
+    "name": "Micke Studio Compact Workstation",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_1.jpg"
+    "image": "frontend/public/catalog/office_desk_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_1.png"
   },
-  "ikea-office_desk-2": {
-    "name": "IKEA Office Desk 200",
+  "pixa-office_desk-2": {
+    "name": "Bekant Architectural Corner Workstation",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_2.jpg"
+    "image": "frontend/public/catalog/office_desk_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_2.png"
   },
-  "ikea-office_desk-3": {
-    "name": "IKEA Office Desk 300",
+  "pixa-office_desk-3": {
+    "name": "Alex Minimal Double Drawer Desk",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_3.jpg"
+    "image": "frontend/public/catalog/office_desk_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_3.png"
   },
-  "ikea-office_desk-4": {
-    "name": "IKEA Office Desk 400",
+  "pixa-office_desk-4": {
+    "name": "Malm Clean Floating Workstation",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_4.jpg"
+    "image": "frontend/public/catalog/office_desk_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_4.png"
   },
-  "ikea-office_desk-5": {
-    "name": "IKEA Office Desk 500",
+  "pixa-office_desk-5": {
+    "name": "Trotten Precision Standing Desk",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_5.jpg"
+    "image": "frontend/public/catalog/office_desk_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_5.png"
   },
-  "ikea-office_desk-6": {
-    "name": "IKEA Office Desk 600",
+  "pixa-office_desk-6": {
+    "name": "Kullaberg Industrial Pine Desk",
     "category": "Office Desk",
-    "image": "e:\\pixabuild\\frontend\\public\\ikea_catalog/office_desk_6.jpg"
+    "image": "frontend/public/catalog/office_desk_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_6.png"
+  },
+  "pixa-display_cabinet-1": {
+    "name": "Billy Architectural Bookcase & Vitrine",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_1.png"
+  },
+  "pixa-display_cabinet-2": {
+    "name": "Fabrik\u00f6r Curved Metal Glass Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_2.png"
+  },
+  "pixa-display_cabinet-3": {
+    "name": "Rudsta Fluted Metal Wall Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_3.png"
+  },
+  "pixa-display_cabinet-4": {
+    "name": "Milsbo Tall Gallery Showcase",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_4.png"
+  },
+  "pixa-display_cabinet-5": {
+    "name": "Brimnes 2-Door Fluted Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_5.png"
+  },
+  "pixa-display_cabinet-6": {
+    "name": "Regiss\u00f6r Solid Wood Display Vitrine",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_6.png"
+  },
+  "pixa-bed_frame-1": {
+    "name": "Malm Low Platform Bedstead",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_1.png"
+  },
+  "pixa-bed_frame-2": {
+    "name": "Hemnes Solid Pine Bed Frame",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_2.png"
+  },
+  "pixa-bed_frame-3": {
+    "name": "Brimnes Integrated Storage Bed Frame",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_3.png"
+  },
+  "pixa-bed_frame-4": {
+    "name": "Nordli Multi-Drawer Platform Bed",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_4.png"
+  },
+  "pixa-bed_frame-5": {
+    "name": "Sl\u00e4kt Minimal Bedstead with Daybed Base",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_5.png"
+  },
+  "pixa-bed_frame-6": {
+    "name": "Songesand Classic Ash Bedstead",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_6.png"
   }
 }

@@ -40,8 +40,9 @@ export default function AdminCatalogPage() {
       dimensions: newItem.dimensions,
       stock_note: "In Stock (Admin Added)",
       stock_count: 10,
-      image_url: "/ikea_catalog/sofa_1.jpg",
-      thumbnail_url: "/ikea_catalog/sofa_1.jpg",
+      image_url: "/catalog/sofa_1.jpg",
+      cutout_url: "/catalog/cutouts/sofa_1.png",
+      thumbnail_url: "/catalog/sofa_1.jpg",
       description: "Custom architecturally curated furniture piece.",
       tags: [newItem.category.toLowerCase(), "custom", "curated"],
     };

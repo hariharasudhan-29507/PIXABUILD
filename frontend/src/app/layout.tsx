@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     default: "PixaBuild — Spatial AI Furniture & Architecture",
     template: "%s | PixaBuild"
   },
-  description: "Imagine it. Before it's yours. Curated Scandinavian furniture with spatial AI room visualization powered by SAM, Depth Anything V2, and ControlNet.",
+  description: "Imagine it. Before it's yours. Curated Scandinavian furniture with spatial room visualization and photorealistic architectural staging.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

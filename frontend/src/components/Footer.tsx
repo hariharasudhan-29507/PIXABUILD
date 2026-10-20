@@ -15,36 +15,35 @@ export function Footer() {
               <span className="font-heading text-lg tracking-wider">PIXABUILD</span>
             </div>
             <p className="text-xs text-[var(--color-muted-taupe)] leading-relaxed">
-              Precision offline & hybrid spatial furniture visualization powered by Segment Anything (SAM),
-              Depth Anything, and ControlNet inpainting.
+              Curated Scandinavian furniture and spatial room visualization for light-filled, architecturally proportioned homes.
             </p>
             <div className="flex items-center gap-2 text-[11px] text-[var(--color-muted-taupe)]">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-600"></span>
-              <span>IKEA Dataset v1.0 Connected</span>
+              <span>PixaBuild Atelier Collection Connected</span>
             </div>
           </div>
 
-          {/* Model Architecture */}
+          {/* Spatial Standards */}
           <div className="space-y-3">
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[var(--color-forest-charcoal)]">
-              AI Stack Core
+              Spatial Standards
             </h4>
             <ul className="space-y-2 text-xs text-[var(--color-muted-taupe)]">
               <li className="flex items-center gap-2">
                 <Eye className="h-3.5 w-3.5 text-[var(--color-sage-green)]" />
-                <span>Segment Anything Model (SAM)</span>
+                <span>1:1 Metric Scale Verification</span>
               </li>
               <li className="flex items-center gap-2">
                 <Layers className="h-3.5 w-3.5 text-[var(--color-sage-green)]" />
-                <span>Depth Anything V2 Estimation</span>
+                <span>Perspective Ground Lock</span>
               </li>
               <li className="flex items-center gap-2">
                 <Cpu className="h-3.5 w-3.5 text-[var(--color-sage-green)]" />
-                <span>ControlNet & LoRA Conditioning</span>
+                <span>Directional Contact Shadows</span>
               </li>
               <li className="flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5 text-[var(--color-terracotta)]" />
-                <span>Cosine ML Recommendation</span>
+                <span>Ambient Daylight Harmonization</span>
               </li>
             </ul>
           </div>
@@ -57,7 +56,7 @@ export function Footer() {
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/catalog" className="text-[var(--color-muted-taupe)] hover:text-[var(--color-forest-charcoal)] transition-colors">
-                  IKEA Furniture Catalog
+                  Curated Catalog (36 Works)
                 </Link>
               </li>
               <li>
