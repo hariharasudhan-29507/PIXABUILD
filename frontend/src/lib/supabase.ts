@@ -1,7 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://yxrrsxewozrbaatocclu.supabase.co";
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key";
+const SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4cnJzeGV3b3pyYmFhdG9jY2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNjgxODIsImV4cCI6MjEwNTc0NDE4Mn0.TXQxqCclVfaOM40cdVaIGftjDRbiykEaraXkki01HA4";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -169,11 +171,23 @@ export async function signUpWithSupabase({
       .select()
       .single();
 
-    if (dbError && dbError.code === "23505") {
-      return { user: null, error: "An account with this email already exists." };
+    if (dbError) {
+      if (
+        dbError.code === "23505" ||
+        dbError.message?.toLowerCase().includes("duplicate") ||
+        dbError.message?.toLowerCase().includes("already exists")
+      ) {
+        return { user: null, error: "An account with this email already exists." };
+      }
+      console.error("Supabase user insert failed:", dbError);
+      return { user: null, error: dbError.message || "Failed to create account in database." };
     }
 
-    const userId = insertedUser?.user_id || "user-" + Math.random().toString(36).substring(2, 9);
+    if (!insertedUser || !insertedUser.user_id) {
+      return { user: null, error: "Database did not return a valid user record." };
+    }
+
+    const userId = insertedUser.user_id;
 
     // 2. Also register with Supabase Auth for complete session persistence
     try {
