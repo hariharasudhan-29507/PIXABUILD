@@ -1,9 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://yxrrsxewozrbaatocclu.supabase.co";
-const SUPABASE_ANON_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+const REAL_SUPABASE_URL = "https://yxrrsxewozrbaatocclu.supabase.co";
+const REAL_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4cnJzeGV3b3pyYmFhdG9jY2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNjgxODIsImV4cCI6MjEwNTc0NDE4Mn0.TXQxqCclVfaOM40cdVaIGftjDRbiykEaraXkki01HA4";
+
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || "";
+const SUPABASE_URL =
+  !rawUrl || rawUrl.includes("dummy") || !rawUrl.startsWith("http")
+    ? REAL_SUPABASE_URL
+    : rawUrl;
+
+const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || "";
+const SUPABASE_ANON_KEY =
+  !rawKey || rawKey.includes("dummy") || rawKey.length < 50
+    ? REAL_ANON_KEY
+    : rawKey;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
