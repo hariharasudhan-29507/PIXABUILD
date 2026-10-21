@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { User, Mail, Lock, ArrowRight, CheckCircle2 } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -14,36 +14,19 @@ const registerSchema = z.object({
   firstName: z
     .string()
     .trim()
-    .min(1, "First name is required")
-    .refine((val) => !/\d/.test(val), "First name cannot contain numbers")
-    .refine((val) => /[a-zA-Z]/.test(val), "First name must contain letters"),
+    .min(1, "First name is required"),
   lastName: z
     .string()
     .trim()
-    .min(1, "Last name or initial is required")
-    .refine((val) => !/\d/.test(val), "Last name cannot contain numbers")
-    .refine((val) => /[a-zA-Z]/.test(val), "Last name or initial must contain letters"),
+    .min(1, "Last name or initial is required"),
   email: z
     .string()
     .trim()
     .min(1, "Email address is required")
-    .refine((val) => {
-      const userPart = val.split("@")[0];
-      return !/^\d+$/.test(userPart);
-    }, "Email username cannot be purely numbers")
-    .refine(
-      (val) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val),
-      "Please enter a valid email address (e.g. user@domain.com)"
-    ),
+    .email("Please enter a valid email address (e.g. user@domain.com)"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters long")
-    .refine((val) => /[A-Z]/.test(val), "Password must contain at least 1 uppercase letter (A-Z)")
-    .refine((val) => /[0-9]/.test(val), "Password must contain at least 1 number (0-9)")
-    .refine(
-      (val) => /[^a-zA-Z0-9]/.test(val),
-      "Password must contain at least 1 special character (!@#$%^&*...)"
-    ),
+    .min(6, "Password must be at least 6 characters long"),
 });
 
 function RegisterForm() {
@@ -85,7 +68,12 @@ function RegisterForm() {
     setLoading(false);
 
     if (user) {
-      router.push(redirectUrl);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("user_updated"));
+        window.location.href = redirectUrl;
+      } else {
+        router.push(redirectUrl);
+      }
     } else {
       setErrors({ form: error || "Registration failed. Please try again." });
     }
@@ -119,6 +107,13 @@ function RegisterForm() {
           Save room scans, curate wishlists, and explore curated furniture collections.
         </p>
       </div>
+
+      {errors.form && (
+        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{errors.form}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
@@ -170,9 +165,12 @@ function RegisterForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#292B26] mb-1">
-            Password
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-medium text-[#292B26]">
+              Password
+            </label>
+            <span className="text-[10px] text-[#8A7867]">At least 6 characters</span>
+          </div>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Lock className="h-4 w-4 text-[#8A7867]" />
