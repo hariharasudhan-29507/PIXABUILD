@@ -1,28 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { User, Mail, Lock, ArrowRight, CheckCircle2 } from "lucide-react";
 import { z } from "zod";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { setCurrentUser } from "@/lib/supabase";
+import { Faq3DMarquee } from "@/components/Faq3DMarquee";
+import { signUpWithSupabase } from "@/lib/supabase";
 
 const registerSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .refine((val) => !/\d/.test(val), "First name cannot contain numbers")
+    .refine((val) => /[a-zA-Z]/.test(val), "First name must contain letters"),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name or initial is required")
+    .refine((val) => !/\d/.test(val), "Last name cannot contain numbers")
+    .refine((val) => /[a-zA-Z]/.test(val), "Last name or initial must contain letters"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email address is required")
+    .refine((val) => {
+      const userPart = val.split("@")[0];
+      return !/^\d+$/.test(userPart);
+    }, "Email username cannot be purely numbers")
+    .refine(
+      (val) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val),
+      "Please enter a valid email address (e.g. user@domain.com)"
+    ),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .refine((val) => /[A-Z]/.test(val), "Password must contain at least 1 uppercase letter (A-Z)")
+    .refine((val) => /[0-9]/.test(val), "Password must contain at least 1 number (0-9)")
+    .refine(
+      (val) => /[^a-zA-Z0-9]/.test(val),
+      "Password must contain at least 1 special character (!@#$%^&*...)"
+    ),
 });
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "" });
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/catalog";
+  const initialEmail = searchParams.get("email") || "";
+
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: initialEmail,
+    password: "",
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
@@ -37,130 +76,160 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setCurrentUser({
-        user_id: "user-" + Math.random().toString(36).substring(2, 9),
-        email: form.email,
-        first_name: form.firstName,
-        last_name: form.lastName,
-        role: "user",
-        status: "active",
-      });
-      router.push("/catalog");
-    }, 400);
+    const { user, error } = await signUpWithSupabase({
+      email: form.email,
+      password: form.password,
+      firstName: form.firstName,
+      lastName: form.lastName,
+    });
+    setLoading(false);
+
+    if (user) {
+      router.push(redirectUrl);
+    } else {
+      setErrors({ form: error || "Registration failed. Please try again." });
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--color-forest-charcoal)]">
+    <div className="bg-[#FCFBF8]/95 backdrop-blur-md border border-[#DCD6CB] rounded-2xl p-7 sm:p-8 shadow-xl">
+      <div className="text-center space-y-2 mb-6">
+        <div className="flex items-center justify-center gap-2.5 mb-2">
+          <svg
+            viewBox="0 0 295 300"
+            className="h-7 w-7 text-[#42483A] shrink-0"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M 2,64 L 1,65 L 1,187 L 0,188 L 0,299 L 145,299 L 145,273 L 146,272 L 146,236 L 64,236 L 63,235 L 63,174 L 64,173 L 64,64 Z M 279,0 L 280,1 L 279,3 L 280,4 L 280,13 L 281,13 L 281,5 L 282,4 L 284,7 L 284,9 L 286,13 L 288,13 L 289,11 L 289,9 L 292,4 L 293,5 L 293,13 L 294,13 L 294,0 L 291,0 L 290,5 L 287,10 L 285,7 L 285,5 L 284,4 L 284,2 L 283,0 Z M 266,0 L 266,1 L 269,1 L 271,3 L 270,4 L 270,13 L 272,13 L 272,2 L 273,1 L 276,1 L 276,0 Z M 67,0 L 66,2 L 66,63 L 230,63 L 231,64 L 231,158 L 230,159 L 230,170 L 229,171 L 148,171 L 147,172 L 147,234 L 221,234 L 223,233 L 294,162 L 294,64 L 232,64 L 230,62 L 231,61 L 231,0 Z"
+              fillRule="evenodd"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span className="font-brand text-2xl tracking-[0.16em] text-[#42483A] leading-none uppercase">
+            PIXABUILD
+          </span>
+        </div>
+        <h1 className="text-xl sm:text-2xl font-serif text-[#292B26] font-medium">
+          Create Your Account
+        </h1>
+        <p className="text-xs text-[#6B655C]">
+          Save room scans, curate wishlists, and explore curated furniture collections.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-[#292B26] mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              value={form.firstName}
+              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+              placeholder="First name"
+              className="w-full rounded-lg border border-[#DCD6CB] bg-[#F6F3ED] px-3 py-2 text-xs text-[#292B26] placeholder-[#8A7867]/60 focus:border-[#42483A] focus:outline-none focus:ring-1 focus:ring-[#42483A]"
+            />
+            {errors.firstName && <p className="mt-1 text-[11px] text-red-600">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#292B26] mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={form.lastName}
+              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+              placeholder="Last name"
+              className="w-full rounded-lg border border-[#DCD6CB] bg-[#F6F3ED] px-3 py-2 text-xs text-[#292B26] placeholder-[#8A7867]/60 focus:border-[#42483A] focus:outline-none focus:ring-1 focus:ring-[#42483A]"
+            />
+            {errors.lastName && <p className="mt-1 text-[11px] text-red-600">{errors.lastName}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-[#292B26] mb-1">
+            Email Address
+          </label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Mail className="h-4 w-4 text-[#8A7867]" />
+            </div>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="name@email.com"
+              className="w-full rounded-lg border border-[#DCD6CB] bg-[#F6F3ED] pl-9 pr-3 py-2 text-xs text-[#292B26] placeholder-[#8A7867]/60 focus:border-[#42483A] focus:outline-none focus:ring-1 focus:ring-[#42483A]"
+            />
+          </div>
+          {errors.email && <p className="mt-1 text-[11px] text-red-600">{errors.email}</p>}
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-[#292B26] mb-1">
+            Password
+          </label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Lock className="h-4 w-4 text-[#8A7867]" />
+            </div>
+            <input
+              type="password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder="••••••••"
+              className="w-full rounded-lg border border-[#DCD6CB] bg-[#F6F3ED] pl-9 pr-3 py-2 text-xs text-[#292B26] placeholder-[#8A7867]/60 focus:border-[#42483A] focus:outline-none focus:ring-1 focus:ring-[#42483A]"
+            />
+          </div>
+          {errors.password && (
+            <p className="mt-1 text-[11px] text-red-600">{errors.password}</p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary w-full py-3 text-xs font-medium mt-2 bg-[#42483A] hover:bg-[#2E3328]"
+        >
+          {loading ? (
+            <span>Creating Member Profile...</span>
+          ) : (
+            <>
+              <span>Complete Registration</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className="mt-6 pt-4 border-t border-[#DCD6CB] text-center text-xs text-[#6B655C]">
+        <span>Already registered? </span>
+        <Link
+          href={redirectUrl !== "/catalog" ? `/login?redirect=${encodeURIComponent(redirectUrl)}` : "/login"}
+          className="font-semibold text-[#42483A] hover:underline"
+        >
+          Sign in
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <div className="relative min-h-screen flex flex-col bg-[#F6F3ED] text-[#292B26] overflow-hidden">
       <Navbar />
 
-      <main className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-6">
-          <div className="pixa-card bg-[var(--color-sand-beige)] border-[var(--border-subtle)] shadow-sm">
-            <div className="text-center space-y-1 mb-6">
-              <span className="text-[10px] font-accent uppercase tracking-widest text-[var(--color-muted-taupe)]">
-                Create Account // Supabase Auth
-              </span>
-              <h1 className="text-2xl font-heading text-[var(--color-forest-charcoal)]">
-                JOIN PIXABUILD STUDIO
-              </h1>
-              <p className="text-xs text-[var(--color-muted-taupe)]">
-                Save room profiles and preview curated IKEA designs in spatial 3D.
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[var(--color-forest-charcoal)] mb-1">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    value={form.firstName}
-                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                    placeholder="Elena"
-                    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] px-3 py-2 text-xs text-[var(--color-forest-charcoal)] focus:border-[var(--color-sage-green)] focus:outline-none"
-                  />
-                  {errors.firstName && <p className="mt-1 text-[11px] text-red-600">{errors.firstName}</p>}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[var(--color-forest-charcoal)] mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    value={form.lastName}
-                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    placeholder="Lindqvist"
-                    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] px-3 py-2 text-xs text-[var(--color-forest-charcoal)] focus:border-[var(--color-sage-green)] focus:outline-none"
-                  />
-                  {errors.lastName && <p className="mt-1 text-[11px] text-red-600">{errors.lastName}</p>}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[var(--color-forest-charcoal)] mb-1">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <Mail className="h-4 w-4 text-[var(--color-muted-taupe)]" />
-                  </div>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="elena@example.com"
-                    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-9 pr-3 py-2 text-xs text-[var(--color-forest-charcoal)] focus:border-[var(--color-sage-green)] focus:outline-none"
-                  />
-                </div>
-                {errors.email && <p className="mt-1 text-[11px] text-red-600">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[var(--color-forest-charcoal)] mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <Lock className="h-4 w-4 text-[var(--color-muted-taupe)]" />
-                  </div>
-                  <input
-                    type="password"
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    placeholder="At least 6 characters"
-                    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-9 pr-3 py-2 text-xs text-[var(--color-forest-charcoal)] focus:border-[var(--color-sage-green)] focus:outline-none"
-                  />
-                </div>
-                {errors.password && <p className="mt-1 text-[11px] text-red-600">{errors.password}</p>}
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full py-2.5 text-xs font-medium mt-2"
-              >
-                {loading ? (
-                  <span>Registering Account...</span>
-                ) : (
-                  <>
-                    <span>Create Free Account</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--color-muted-taupe)]">
-              <span>Already registered? </span>
-              <Link href="/login" className="font-semibold text-[var(--color-sage-green)] hover:underline">
-                Sign in
-              </Link>
-            </div>
-          </div>
+      <main className="relative flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 overflow-hidden z-10">
+        <Faq3DMarquee />
+        <div className="relative w-full max-w-md space-y-6 z-10">
+          <Suspense fallback={<div className="text-center py-12 text-xs text-[#8A7867]">Loading...</div>}>
+            <RegisterForm />
+          </Suspense>
         </div>
       </main>
 

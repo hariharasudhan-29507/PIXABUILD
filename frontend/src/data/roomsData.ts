@@ -10,121 +10,83 @@ export interface RoomAsset {
 }
 
 export const ROOM_CATEGORIES = [
-  { id: "living-room", label: "Living Room", count: 2 },
-  { id: "bedroom", label: "Bedroom", count: 2 },
-  { id: "dining-room", label: "Dining Room", count: 2 },
-  { id: "home-office", label: "Home Office", count: 2 },
-  { id: "entryway", label: "Entryway & Foyer", count: 2 },
+  { id: "all", label: "All Rooms", count: 7 },
+  { id: "living-room", label: "Living Room", count: 3 },
+  { id: "bedroom", label: "Bedroom", count: 1 },
+  { id: "dining-room", label: "Dining Room", count: 1 },
+  { id: "home-office", label: "Home Office", count: 1 },
+  { id: "entryway", label: "Entryway & Foyer", count: 1 },
 ] as const;
 
 export const ROOM_ASSETS: RoomAsset[] = [
-  // Living Rooms
   {
-    room_id: "room-living-01",
+    room_id: "room-01",
     category: "living-room",
-    name: "Stockholm Sunlit Salon",
-    image_url: "/rooms/living_01.jpg",
-    dimensions: "6.2m x 4.8m (29.8 m²)",
-    lighting: "Southwest daylight with late afternoon sun",
-    flooring: "Bleached Scandinavian Ash Planks",
-    description: "Expansive airy space with high ceilings, warm plaster walls, and generous natural daylight floor plane."
+    name: "Room 1 - Scandinavian Living Space",
+    image_url: "/rooms/room1.webp",
+    dimensions: "5.8m x 4.4m (25.5 m²)",
+    lighting: "Warm ambient daylight with soft floor bounce",
+    flooring: "Natural Ash Hardwood Flooring",
+    description: "Open contemporary layout with expansive floor plane, ideal for seating arrangements and spatial visualization."
   },
   {
-    room_id: "room-living-02",
+    room_id: "room-02",
+    category: "bedroom",
+    name: "Room 2 - Modern Master Suite",
+    image_url: "/rooms/room2.webp",
+    dimensions: "5.2m x 4.0m (20.8 m²)",
+    lighting: "Diffused morning architectural light",
+    flooring: "Warm Matte Douglas Fir Planks",
+    description: "Serene bedroom sanctuary with clean sightlines and ample clearance for platform bedframes and storage."
+  },
+  {
+    room_id: "room-03",
     category: "living-room",
-    name: "Nordic Minimalist Living Room",
-    image_url: "/rooms/living_02.jpg",
-    dimensions: "5.5m x 4.2m (23.1 m²)",
-    lighting: "Soft ambient diffused daylight",
-    flooring: "Natural Oak Parquet with matte finish",
-    description: "Restrained architectural salon featuring floor-to-ceiling windows and deep negative space for lounge seating."
-  },
-
-  // Bedrooms
-  {
-    room_id: "room-bedroom-01",
-    category: "bedroom",
-    name: "Copenhagen Linen Suite",
-    image_url: "/rooms/bedroom_01.jpg",
-    dimensions: "4.8m x 4.0m (19.2 m²)",
-    lighting: "Soft morning window wash",
-    flooring: "Warm Danish Douglas Fir",
-    description: "Quiet sanctuary with natural ivory limewash walls, ideal for low-profile beds and tactile bouclé benches."
+    name: "Room 3 - Warm Oak Architectural Salon",
+    image_url: "/rooms/room3.webp",
+    dimensions: "6.0m x 4.6m (27.6 m²)",
+    lighting: "Balanced afternoon sunlight wash",
+    flooring: "Natural Oak Parquet with subtle grain",
+    description: "Refined minimalist living room featuring balanced perspective vanishing points for realistic furniture staging."
   },
   {
-    room_id: "room-bedroom-02",
-    category: "bedroom",
-    name: "Gothenburg Neutral Bedroom",
-    image_url: "/rooms/bedroom_02.jpg",
+    room_id: "room-04",
+    category: "home-office",
+    name: "Room 4 - Bright Contemporary Studio",
+    image_url: "/rooms/room4.webp",
     dimensions: "4.5m x 3.8m (17.1 m²)",
-    lighting: "Gentle northern exposure",
-    flooring: "Light Natural Oak Planks",
-    description: "Understated residential suite with minimal shadow gradients and ample wall space."
+    lighting: "Even studio illumination from corner glazing",
+    flooring: "Bleached Scandinavian Pine Planks",
+    description: "Modern atelier workspace optimized for ergonomic desk setups, display cabinets, and lounge seating."
   },
-
-  // Dining Rooms
   {
-    room_id: "room-dining-01",
+    room_id: "room-05",
     category: "dining-room",
-    name: "Aarhus Hardwood Dining Hall",
-    image_url: "/rooms/dining_01.jpg",
-    dimensions: "5.8m x 4.5m (26.1 m²)",
-    lighting: "Direct architectural illumination & skylight",
-    flooring: "Smoked Solid Oak Boards",
-    description: "Generously proportioned dining area with deep perspective lines to stage dining tables and sculptured chairs."
+    name: "Room 5 - Dining & Lounge Alcove",
+    image_url: "/rooms/room5.webp",
+    dimensions: "5.0m x 4.2m (21.0 m²)",
+    lighting: "Atmospheric natural daylight and perimeter wash",
+    flooring: "Smoked Oak Hardwood Flooring",
+    description: "Harmonious dining and social area with deep perspective lines for table suites and sculptural chairs."
   },
   {
-    room_id: "room-dining-02",
-    category: "dining-room",
-    name: "Malmö Natural Oak Dining Space",
-    image_url: "/rooms/dining_02.jpg",
-    dimensions: "5.0m x 3.9m (19.5 m²)",
-    lighting: "Morning courtyard reflection",
-    flooring: "Natural Birch Herringbone",
-    description: "Intimate Scandinavian dining alcove with textured lime plaster walls."
-  },
-
-  // Home Offices
-  {
-    room_id: "room-office-01",
-    category: "home-office",
-    name: "Oslo Atelier Workspace",
-    image_url: "/rooms/office_01.jpg",
-    dimensions: "4.2m x 3.6m (15.1 m²)",
-    lighting: "Even workspace illumination from corner glazing",
-    flooring: "Natural Matte Oak",
-    description: "Focused creative workspace with clean sightlines and ample clearance for desks and ergonomic seating."
+    room_id: "room-06",
+    category: "living-room",
+    name: "Room 6 - Sunlit Gallery Interior",
+    image_url: "/rooms/room6.webp",
+    dimensions: "5.6m x 4.5m (25.2 m²)",
+    lighting: "Direct sunlit floor pool with clean shadow edges",
+    flooring: "Natural Ash Engineered Timber",
+    description: "Architectural salon space featuring high ceilings, warm plaster walls, and generous negative space."
   },
   {
-    room_id: "room-office-02",
-    category: "home-office",
-    name: "Bergen Architectural Studio",
-    image_url: "/rooms/office_02.jpg",
-    dimensions: "4.6m x 3.8m (17.5 m²)",
-    lighting: "Balanced overhead skylight & window bounce",
-    flooring: "Polished Sandstone Microcement",
-    description: "Modern atelier with architectural shelving niches and refined acoustic qualities."
-  },
-
-  // Entryway & Foyer
-  {
-    room_id: "room-entryway-01",
+    room_id: "room-07",
     category: "entryway",
-    name: "Helsinki Plaster Foyer",
-    image_url: "/rooms/entryway_01.jpg",
-    dimensions: "3.5m x 2.8m (9.8 m²)",
-    lighting: "Soft warm transitional ambient light",
-    flooring: "Honed Swedish Limestone",
-    description: "Welcoming entryway vestibule with clean vertical lines for benches, consoles, and storage."
-  },
-  {
-    room_id: "room-entryway-02",
-    category: "entryway",
-    name: "Uppsala Timber Vestibule",
-    image_url: "/rooms/entryway_02.jpg",
-    dimensions: "3.8m x 2.6m (9.9 m²)",
-    lighting: "Natural doorway sidelight",
-    flooring: "Solid Oak Herringbone",
-    description: "Architectural foyer with natural timber accents and warm neutral plaster surfaces."
-  },
+    name: "Room 7 - Neutral Foyer & Vestibule",
+    image_url: "/rooms/room7.webp",
+    dimensions: "4.2m x 3.2m (13.4 m²)",
+    lighting: "Soft ambient sidelight",
+    flooring: "Honed Limestone & Hardwood Inset",
+    description: "Sophisticated entry gallery suited for accent consoles, armchairs, and architectural storage elements."
+  }
 ];

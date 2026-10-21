@@ -3,35 +3,56 @@ import numpy as np
 from PIL import Image, ImageFilter
 from collections import deque
 
+def compute_homography_coeffs(src_coords, dst_coords):
+    """
+    Computes 8 coefficients for PIL Image.PERSPECTIVE mapping.
+    Maps destination coordinates back into source coordinates for pixel-perfect interpolation.
+    """
+    matrix = []
+    for (sx, sy), (dx, dy) in zip(src_coords, dst_coords):
+        matrix.append([dx, dy, 1, 0, 0, 0, -sx * dx, -sx * dy])
+        matrix.append([0, 0, 0, dx, dy, 1, -sy * dx, -sy * dy])
+    A = np.array(matrix, dtype=np.float64)
+    B = np.array(src_coords, dtype=np.float64).reshape(8)
+    coeffs = np.linalg.solve(A, B)
+    return tuple(coeffs)
+
 def extract_alpha_cutout(img, tol=28):
     """
     Safely removes solid/near-solid studio background from perimeter,
+    including any trapped grey studio floor contact shadows,
     producing a clean transparent PNG mask with smoothed anti-aliased edges.
     """
     rgb = img.convert("RGB")
     arr = np.array(rgb, dtype=np.float32)
     h, w, _ = arr.shape
 
-    borders = np.concatenate([arr[0, :], arr[-1, :], arr[:, 0], arr[:, -1]], axis=0)
-    bg_color = np.median(borders, axis=0)
-    dist = np.sqrt(np.sum((arr - bg_color) ** 2, axis=-1))
+    r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
+    bright = (r + g + b) / 3.0
+    chroma = np.maximum(np.maximum(r, g), b) - np.minimum(np.minimum(r, g), b)
+
+    bot_half = np.zeros((h, w), dtype=bool)
+    bot_half[int(h * 0.60):, :] = True
+
+    is_white = (bright >= 240) & (chroma < 18)
+    is_shadow = bot_half & (chroma < 18) & (bright >= 95)
 
     is_bg = np.zeros((h, w), dtype=bool)
     q = deque()
 
     for x in range(w):
-        if dist[0, x] < tol:
+        if (is_white[0, x] or is_shadow[0, x]) and not is_bg[0, x]:
             is_bg[0, x] = True
             q.append((0, x))
-        if dist[h - 1, x] < tol:
+        if (is_white[h - 1, x] or is_shadow[h - 1, x]) and not is_bg[h - 1, x]:
             is_bg[h - 1, x] = True
             q.append((h - 1, x))
 
     for y in range(h):
-        if dist[y, 0] < tol and not is_bg[y, 0]:
+        if (is_white[y, 0] or is_shadow[y, 0]) and not is_bg[y, 0]:
             is_bg[y, 0] = True
             q.append((y, 0))
-        if dist[y, w - 1] < tol and not is_bg[y, w - 1]:
+        if (is_white[y, w - 1] or is_shadow[y, w - 1]) and not is_bg[y, w - 1]:
             is_bg[y, w - 1] = True
             q.append((y, w - 1))
 
@@ -39,16 +60,24 @@ def extract_alpha_cutout(img, tol=28):
         y, x = q.popleft()
         for dy, dx in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             ny, nx = y + dy, x + dx
-            if 0 <= ny < h and 0 <= nx < w:
-                if not is_bg[ny, nx] and dist[ny, nx] < tol:
+            if 0 <= ny < h and 0 <= nx < w and not is_bg[ny, nx]:
+                if is_white[ny, nx] or is_shadow[ny, nx]:
                     is_bg[ny, nx] = True
                     q.append((ny, nx))
 
+    # Catch any trapped inner shadow between legs
+    is_bg |= (bot_half & (chroma < 16) & (bright >= 110))
+
     mask = (~is_bg).astype(np.uint8) * 255
-    mask_img = Image.fromarray(mask).filter(ImageFilter.GaussianBlur(radius=0.8))
+    mask_img = Image.fromarray(mask).filter(ImageFilter.GaussianBlur(radius=0.6))
 
     rgba = rgb.convert("RGBA")
     rgba.putalpha(mask_img)
+
+    bbox = rgba.getbbox()
+    if bbox:
+        rgba = rgba.crop(bbox)
+
     return rgba
 
 class FurnitureGenerator:
@@ -103,6 +132,16 @@ class FurnitureGenerator:
         target_furn_h = int(target_furn_w * aspect)
         furn = furn.resize((target_furn_w, target_furn_h), Image.LANCZOS)
         fw, fh = furn.size
+
+        # Apply Homography perspective transformation aligning with room floor vanishing lines
+        try:
+            persp_offset = max(2, int(fw * 0.022))
+            src_pts = [(0, 0), (fw, 0), (fw, fh), (0, fh)]
+            dst_pts = [(persp_offset, 0), (fw - persp_offset, 0), (fw, fh), (0, fh)]
+            h_coeffs = compute_homography_coeffs(src_pts, dst_pts)
+            furn = furn.transform((fw, fh), Image.PERSPECTIVE, h_coeffs, Image.Resampling.BICUBIC)
+        except Exception as he:
+            print(f"[Homography] Precision fallback: {he}")
 
         # Find placement anchor from mask centroid or lower-third floor plane
         mask = mask_img.convert("L")

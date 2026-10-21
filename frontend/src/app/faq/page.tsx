@@ -19,11 +19,11 @@ const FAQS = [
   },
   {
     q: "Are all furniture items real products I can purchase?",
-    a: "Yes. Every piece in our catalog is derived from verified IKEA collections with authentic dimensions, materials, and availability notes."
+    a: "Yes. Every piece in our catalog is derived from verified collections with authentic dimensions, materials, and availability notes."
   },
   {
     q: "What is your white-glove delivery policy?",
-    a: "All orders over $300 qualify for free white-glove freight delivery, which includes room-of-choice placement, unboxing, and packaging recycling."
+    a: "All orders over Rs. 3,000 qualify for free white-glove freight delivery, which includes room-of-choice placement, unboxing, and packaging recycling."
   },
   {
     q: "What if the furniture does not fit as imagined once delivered?",

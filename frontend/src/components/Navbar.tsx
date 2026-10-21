@@ -9,13 +9,12 @@ import {
   Heart,
   ShoppingBag,
   Sparkles,
-  ChevronDown,
   LogOut,
   Shield,
   Menu,
   X
 } from "lucide-react";
-import { getCurrentUser, setCurrentUser, UserSession, STORAGE_KEYS } from "@/lib/supabase";
+import { getCurrentUser, signOutFromSupabase, UserSession, STORAGE_KEYS } from "@/lib/supabase";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -56,108 +55,98 @@ export function Navbar() {
     };
   }, [pathname]);
 
-  const handleLogout = () => {
-    setCurrentUser(null);
+  const handleLogout = async () => {
+    await signOutFromSupabase();
     setUser(null);
     router.push("/login");
   };
 
+  const getProtectedHref = (href: string) => {
+    if (!user && href !== "/") {
+      return `/login?redirect=${encodeURIComponent(href)}`;
+    }
+    return href;
+  };
+
   const navLinks = [
     { href: "/catalog", label: "Shop", hasMega: true },
-    { href: "/rooms", label: "Rooms" },
     { href: "/collections", label: "Collections" },
-    { href: "/inspiration", label: "Inspiration" },
-    { href: "/visualize", label: "Visualize in My Room", highlight: true },
+    { href: "/visualize", label: "Visualize" },
   ];
 
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-[var(--border-subtle)] bg-[#F7F5F0]/95 backdrop-blur-md">
-      {/* 1. Restrained Announcement Strip */}
-      <div className="w-full bg-[#E6DFD2]/60 border-b border-[var(--border-subtle)] py-1.5 px-4 text-center">
-        <p className="text-[11px] tracking-wide text-[#74736B] font-body flex items-center justify-center gap-2">
-          <span>Complimentary spatial room staging with every Scandinavian order</span>
-          <span className="hidden sm:inline text-[#8C7965]">•</span>
-          <Link href="/visualize" className="hidden sm:inline text-[#30352D] font-medium underline underline-offset-2 hover:text-[#78816A]">
-            Try Visualizer
-          </Link>
-        </p>
-      </div>
+  const isHero = pathname === "/";
+  const isAuthPage = pathname === "/login" || pathname === "/register";
 
-      {/* 2. Main Navigation Bar */}
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group text-decoration-none">
-          <div className="flex h-9 w-9 items-center justify-center rounded bg-[#30352D] text-white p-1.5 transition-transform duration-160 group-hover:scale-105">
-            <img src="/logo.svg" alt="PixaBuild Logo" className="h-full w-full object-contain filter invert" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-heading text-xl tracking-wider text-[#30352D] leading-none">
-              PIXABUILD
-            </span>
-            <span className="text-[9px] font-body tracking-[0.2em] text-[#8C7965] uppercase mt-0.5">
-              Copenhagen // Studio
-            </span>
-          </div>
+  return (
+    <header className="sticky top-0 z-50 w-full bg-transparent border-none">
+      {/* Main Navigation Bar - Spreading end-to-end with 0% opacity background all time */}
+      <div className="w-full flex h-18 items-center justify-between px-6 sm:px-10 lg:px-16">
+        {/* Brand Logo with Bodoni Moda font for PIXABUILD - Ivory on hero, dark brand color on all other pages */}
+        <Link href="/" className="flex items-center gap-3 group text-decoration-none py-1">
+          <svg
+            viewBox="0 0 295 300"
+            className={`h-9 w-9 transition-colors duration-200 group-hover:scale-105 shrink-0 ${
+              isHero ? "text-[#F6F3ED]" : "text-[#42483A]"
+            }`}
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M 2,64 L 1,65 L 1,187 L 0,188 L 0,299 L 145,299 L 145,273 L 146,272 L 146,236 L 64,236 L 63,235 L 63,174 L 64,173 L 64,64 Z M 279,0 L 280,1 L 279,3 L 280,4 L 280,13 L 281,13 L 281,5 L 282,4 L 284,7 L 284,9 L 286,13 L 288,13 L 289,11 L 289,9 L 292,4 L 293,5 L 293,13 L 294,13 L 294,0 L 291,0 L 290,5 L 287,10 L 285,7 L 285,5 L 284,4 L 284,2 L 283,0 Z M 266,0 L 266,1 L 269,1 L 271,3 L 270,4 L 270,13 L 272,13 L 272,2 L 273,1 L 276,1 L 276,0 Z M 67,0 L 66,2 L 66,63 L 230,63 L 231,64 L 231,158 L 230,159 L 230,170 L 229,171 L 148,171 L 147,172 L 147,234 L 221,234 L 223,233 L 294,162 L 294,64 L 232,64 L 230,62 L 231,61 L 231,0 Z"
+              fillRule="evenodd"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span
+            className={`font-brand text-2xl sm:text-3xl tracking-[0.16em] leading-none uppercase transition-colors duration-200 ${
+              isHero ? "text-[#F6F3ED]" : "text-[#42483A]"
+            }`}
+          >
+            PIXABUILD
+          </span>
         </Link>
 
-        {/* Desktop Primary Navigation */}
-        <nav className="hidden lg:flex items-center gap-7">
+        {/* Desktop Primary Navigation & Actions - Hidden on Sign In / Register pages */}
+        {!isAuthPage && (
+          <>
+            <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+            const targetHref = getProtectedHref(link.href);
+
             return (
               <div
                 key={link.href}
                 className="relative py-4"
-                onMouseEnter={() => link.hasMega && setShopMegaOpen(true)}
+                onMouseEnter={() => link.hasMega && user && setShopMegaOpen(true)}
                 onMouseLeave={() => link.hasMega && setShopMegaOpen(false)}
               >
                 <Link
-                  href={link.href}
-                  className={`text-[12px] font-medium tracking-wide uppercase transition-colors flex items-center gap-1 ${
-                    link.highlight
-                      ? "text-[#78816A] hover:text-[#5F6753] font-semibold"
-                      : isActive
-                      ? "text-[#30352D] font-semibold underline underline-offset-8 decoration-1 decoration-[#30352D]"
-                      : "text-[#30352D]/80 hover:text-[#30352D]"
+                  href={targetHref}
+                  className={`text-[14px] sm:text-[15px] font-semibold tracking-[0.12em] uppercase transition-colors flex items-center gap-1.5 ${
+                    isActive
+                      ? "text-[#42483A] underline underline-offset-8 decoration-2 decoration-[#42483A]"
+                      : "text-[#42483A] hover:text-[#2E3328]"
                   }`}
                 >
-                  {link.highlight && <Sparkles className="h-3 w-3" />}
                   <span>{link.label}</span>
-                  {link.hasMega && <ChevronDown className="h-3 w-3 opacity-60" />}
                 </Link>
 
-                {/* Clean Category Mega-Menu */}
-                {link.hasMega && shopMegaOpen && (
-                  <div className="absolute left-0 top-full w-[480px] bg-[#FFFFFF] border border-[var(--border-subtle)] rounded-lg p-5 shadow-xl grid grid-cols-2 gap-4 animate-in fade-in-50 duration-150">
-                    <div>
-                      <span className="text-[10px] font-semibold text-[#8C7965] uppercase tracking-wider block mb-2">
-                        Categories
-                      </span>
-                      <ul className="space-y-1.5 text-xs text-[#30352D]">
-                        <li><Link href="/catalog?category=Sofa" className="hover:text-[#78816A] block py-0.5">Sofas & Loungers</Link></li>
-                        <li><Link href="/catalog?category=Dining+Chair" className="hover:text-[#78816A] block py-0.5">Dining Chairs</Link></li>
-                        <li><Link href="/catalog?category=Coffee+Table" className="hover:text-[#78816A] block py-0.5">Coffee & Accent Tables</Link></li>
-                        <li><Link href="/catalog?category=Display+Cabinet" className="hover:text-[#78816A] block py-0.5">Cabinets & Storage</Link></li>
-                        <li><Link href="/catalog?category=Bed+Frame" className="hover:text-[#78816A] block py-0.5">Bed Frames & Mattresses</Link></li>
-                        <li><Link href="/catalog?category=Office+Desk" className="hover:text-[#78816A] block py-0.5">Ergonomic Workstations</Link></li>
-                      </ul>
-                    </div>
-                    <div className="bg-[#F7F5F0] rounded p-3 flex flex-col justify-between border border-[var(--border-subtle)]">
-                      <div>
-                        <span className="text-[10px] font-semibold text-[#B96E4B] uppercase tracking-wider block mb-1">
-                          Curated Edit
-                        </span>
-                        <h4 className="text-xs font-semibold text-[#30352D] leading-snug">
-                          The Natural Oak Collection 2026
-                        </h4>
-                        <p className="text-[11px] text-[#74736B] mt-1">
-                          Sustainably harvested Scandinavian timber finished in organic matte oil.
-                        </p>
-                      </div>
-                      <Link href="/collections" className="text-[11px] font-medium text-[#78816A] hover:underline mt-2 inline-block">
-                        View Editorial →
-                      </Link>
-                    </div>
+                {/* Category Menu (Spanned across with increased size, curated edit removed) */}
+                {link.hasMega && shopMegaOpen && user && (
+                  <div className="absolute left-0 top-full w-[380px] sm:w-[440px] bg-[#FFFFFF] border border-[#DCD6CB] rounded-2xl p-6 shadow-2xl animate-in fade-in-50 duration-150">
+                    <span className="text-[11px] font-semibold text-[#8C7965] uppercase tracking-[0.16em] block mb-3.5">
+                      Categories
+                    </span>
+                    <ul className="grid grid-cols-2 gap-x-6 gap-y-3.5 text-sm text-[#30352D]">
+                      <li><Link href="/catalog?category=Sofa" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Sofas & Loungers</Link></li>
+                      <li><Link href="/catalog?category=Dining+Chair" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Dining Chairs</Link></li>
+                      <li><Link href="/catalog?category=Coffee+Table" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Coffee & Accent Tables</Link></li>
+                      <li><Link href="/catalog?category=Display+Cabinet" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Cabinets & Storage</Link></li>
+                      <li><Link href="/catalog?category=Bed+Frame" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Bed Frames & Mattresses</Link></li>
+                      <li><Link href="/catalog?category=Office+Desk" className="hover:text-[#42483A] font-medium block py-0.5 transition-colors">Ergonomic Workstations</Link></li>
+                    </ul>
                   </div>
                 )}
               </div>
@@ -165,37 +154,48 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right Icon Actions (Search, Account, Wishlist, Cart) */}
-        <div className="flex items-center gap-4">
-          <Link
-            href="/search"
+        {/* Right Icon Actions (Dark brand color icons & pseudo glassmorphic Ivory Sign In) */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            onClick={() => {
+              if (pathname === "/catalog") {
+                const input = document.getElementById("catalog-search-input") as HTMLInputElement | null;
+                if (input) {
+                  input.focus();
+                  input.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+              } else {
+                router.push("/catalog?focusSearch=true");
+              }
+            }}
             aria-label="Search furniture catalog"
-            className="text-[#30352D] hover:text-[#78816A] transition-colors p-1"
+            className="flex items-center justify-center h-8 w-8 text-[#42483A] hover:text-[#5F6753] transition-colors"
           >
-            <Search className="h-4 w-4 stroke-[1.5]" />
-          </Link>
+            <Search className="h-5 w-5 stroke-[1.75]" />
+          </button>
 
           <Link
-            href="/wishlist"
+            href={getProtectedHref("/wishlist")}
             aria-label="Saved wishlist"
-            className="relative text-[#30352D] hover:text-[#78816A] transition-colors p-1"
+            className="relative flex items-center justify-center h-8 w-8 text-[#42483A] hover:text-[#5F6753] transition-colors"
           >
-            <Heart className="h-4 w-4 stroke-[1.5]" />
-            {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#B96E4B] px-0.5 text-[9px] font-bold text-white">
+            <Heart className="h-5 w-5 stroke-[1.75]" />
+            {wishlistCount > 0 && user && (
+              <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#B96E4B] px-0.5 text-[9px] font-bold text-white">
                 {wishlistCount}
               </span>
             )}
           </Link>
 
           <Link
-            href="/cart"
+            href={getProtectedHref("/cart")}
             aria-label="Cart"
-            className="relative text-[#30352D] hover:text-[#78816A] transition-colors p-1"
+            className="relative flex items-center justify-center h-8 w-8 text-[#42483A] hover:text-[#5F6753] transition-colors"
           >
-            <ShoppingBag className="h-4 w-4 stroke-[1.5]" />
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#30352D] px-0.5 text-[9px] font-bold text-white">
+            <ShoppingBag className="h-5 w-5 stroke-[1.75]" />
+            {cartCount > 0 && user && (
+              <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#30352D] px-0.5 text-[9px] font-bold text-white">
                 {cartCount}
               </span>
             )}
@@ -203,10 +203,10 @@ export function Navbar() {
 
           {/* User Account / Profile */}
           {user ? (
-            <div className="flex items-center gap-2 border-s border-[var(--border-subtle)] ps-3">
+            <div className="flex items-center gap-2 border-s border-[#42483A]/20 ps-3">
               <Link
                 href="/profile"
-                className="text-xs font-medium text-[#30352D] hover:text-[#78816A] truncate max-w-[100px] hidden md:inline"
+                className="text-xs font-medium text-[#42483A] hover:text-[#5F6753] truncate max-w-[100px] hidden md:inline"
               >
                 {user.first_name}
               </Link>
@@ -216,57 +216,70 @@ export function Navbar() {
                   title="Admin Dashboard"
                   className="p-1 rounded bg-[#E6DFD2] text-[#B96E4B] hover:bg-[#E6DFD2]/80"
                 >
-                  <Shield className="h-3.5 w-3.5 stroke-[1.75]" />
+                  <Shield className="h-4 w-4 stroke-[1.75]" />
                 </Link>
               )}
               <button
                 onClick={handleLogout}
                 title="Sign out"
-                className="text-[#74736B] hover:text-[#30352D] p-1"
+                className="text-[#42483A] hover:text-[#5F6753] p-1"
               >
-                <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+                <LogOut className="h-4.5 w-4.5 stroke-[1.75]" />
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              aria-label="Sign in"
-              className="text-[#30352D] hover:text-[#78816A] transition-colors p-1"
-            >
-              <User className="h-4 w-4 stroke-[1.5]" />
-            </Link>
+            <div className="flex items-center gap-2.5">
+              <Link
+                href="/login"
+                aria-label="Sign in"
+                className="text-[#42483A] hover:text-[#5F6753] transition-colors p-1"
+              >
+                <User className="h-5 w-5 stroke-[1.75]" />
+              </Link>
+              <Link
+                href="/login"
+                className="text-xs font-semibold px-4 py-2 rounded-full bg-[#42483A]/15 hover:bg-[#42483A]/25 active:bg-[#42483A]/30 backdrop-blur-md border border-[#42483A]/30 hover:border-[#42483A]/50 text-[#42483A] transition-all duration-200 hidden sm:inline-block"
+              >
+                Sign In
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-[#30352D] p-1"
+            className="lg:hidden text-[#42483A] p-1"
             aria-label="Toggle navigation"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="h-6 w-6 stroke-[1.75]" /> : <Menu className="h-6 w-6 stroke-[1.75]" />}
           </button>
         </div>
+          </>
+        )}
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#F7F5F0] border-b border-[var(--border-subtle)] px-4 py-4 space-y-3">
-          <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="block text-xs uppercase font-medium py-1.5 text-[#30352D]">
-            Shop All Catalog
+      {/* Mobile Drawer Menu - Only Shop, Collections, Visualize (Hidden on auth pages) */}
+      {!isAuthPage && mobileMenuOpen && (
+        <div className="lg:hidden bg-[#1D1F1C]/95 backdrop-blur-md border-b border-white/10 px-6 py-5 space-y-3">
+          <Link href={getProtectedHref("/catalog")} onClick={() => setMobileMenuOpen(false)} className="block text-sm uppercase tracking-widest font-semibold py-1.5 text-[#F6F3ED]">
+            Shop
           </Link>
-          <Link href="/rooms" onClick={() => setMobileMenuOpen(false)} className="block text-xs uppercase font-medium py-1.5 text-[#30352D]">
-            Shop by Rooms
+          <Link href={getProtectedHref("/collections")} onClick={() => setMobileMenuOpen(false)} className="block text-sm uppercase tracking-widest font-semibold py-1.5 text-[#F6F3ED]">
+            Collections
           </Link>
-          <Link href="/collections" onClick={() => setMobileMenuOpen(false)} className="block text-xs uppercase font-medium py-1.5 text-[#30352D]">
-            Editorial Collections
+          <Link href={getProtectedHref("/visualize")} onClick={() => setMobileMenuOpen(false)} className="block text-sm uppercase tracking-widest font-semibold py-1.5 text-[#F6F3ED]">
+            Visualize
           </Link>
-          <Link href="/inspiration" onClick={() => setMobileMenuOpen(false)} className="block text-xs uppercase font-medium py-1.5 text-[#30352D]">
-            Design Inspiration
-          </Link>
-          <Link href="/visualize" onClick={() => setMobileMenuOpen(false)} className="block text-xs uppercase font-semibold py-1.5 text-[#78816A] flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Visualize in My Room</span>
-          </Link>
+          {!user && (
+            <div className="pt-3 border-t border-white/15 flex gap-2">
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="btn-primary text-xs py-2 px-4 flex-1 text-center bg-[#42483A] text-white">
+                Sign In
+              </Link>
+              <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="btn-secondary text-xs py-2 px-4 flex-1 text-center border-white/30 text-[#F6F3ED]">
+                Register
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </header>

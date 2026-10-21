@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Search, Edit2, Trash2, CheckCircle2, AlertCircle } from "lucide-react";
 import { FURNITURE_CATALOG, FurnitureItem } from "@/data/furnitureData";
 import { recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 export default function AdminCatalogPage() {
   const [items, setItems] = useState<FurnitureItem[]>(FURNITURE_CATALOG);
@@ -115,7 +116,7 @@ export default function AdminCatalogPage() {
                   <td className="py-3 px-4 font-medium text-[#30352D]">{item.name}</td>
                   <td className="py-3 px-4 text-[#74736B]">{item.category}</td>
                   <td className="py-3 px-4 font-mono text-[11px] text-[#74736B]">{item.dimensions}</td>
-                  <td className="py-3 px-4 font-mono font-bold text-[#30352D]">${item.price.toFixed(2)}</td>
+                  <td className="py-3 px-4 font-mono font-bold text-[#30352D]">{formatINR(item.price)}</td>
                   <td className="py-3 px-4 font-semibold text-[#78816A]">{item.stock_count}</td>
                   <td className="py-3 px-4 text-right">
                     <button
@@ -168,7 +169,7 @@ export default function AdminCatalogPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-medium mb-1">Price ($)</label>
+                  <label className="block font-medium mb-1">Price (Rs.)</label>
                   <input
                     type="number"
                     value={newItem.price}

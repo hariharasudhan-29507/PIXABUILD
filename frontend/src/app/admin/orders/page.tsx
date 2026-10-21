@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { STORAGE_KEYS, recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 interface AdminOrder {
   order_id: string;
@@ -203,7 +204,7 @@ export default function AdminOrdersPage() {
             Net Revenue
           </span>
           <div className="font-serif text-2xl text-[#30352D] mt-1">
-            ${totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            {formatINR(totalRevenue)}
           </div>
           <span className="text-[11px] text-emerald-700">Excludes cancelled dispatches</span>
         </div>
@@ -287,7 +288,7 @@ export default function AdminOrdersPage() {
                     <td className="py-3 px-4 text-[#8C7965]">{o.date}</td>
                     <td className="py-3 px-4 text-[#30352D]">{o.itemsCount} pcs</td>
                     <td className="py-3 px-4 font-semibold text-[#30352D]">
-                      ${Number(o.total).toFixed(2)}
+                      {formatINR(Number(o.total))}
                     </td>
                     <td className="py-3 px-4 text-[#30352D]">{o.shipping_city}</td>
                     <td className="py-3 px-4">{getStatusBadge(o.status)}</td>
@@ -366,7 +367,7 @@ export default function AdminOrdersPage() {
               <div className="flex justify-between py-1 border-b border-[#E6DFD2]/50">
                 <span className="text-[#8C7965]">Total Amount:</span>
                 <span className="font-serif text-base font-bold text-[#30352D]">
-                  ${Number(selectedOrder.total).toFixed(2)}
+                  {formatINR(Number(selectedOrder.total))}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">

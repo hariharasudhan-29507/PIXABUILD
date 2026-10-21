@@ -4,17 +4,18 @@ import { ArrowRight, Compass } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export const metadata: Metadata = {
-  title: "Editorial Collections — Scandinavian Living",
-  description: "Curated Scandinavian furniture edits: Natural Oak, Soft Neutrals, Small-Space Living, and Modern Essentials.",
+  title: "Editorial Collections — Living Spaces",
+  description: "Curated furniture edits: Natural Oak, Soft Neutrals, Small-Space Living, and Modern Essentials.",
 };
 
 const COLLECTIONS = [
   {
     id: "natural-oak",
     title: "The Natural Oak Edit",
-    subtitle: "Organic Scandinavian Warmth",
+    subtitle: "Organic Timber Warmth",
     desc: "Unvarnished European oak treated with natural botanical oils. Celebrates authentic grain variations and honest mortise-and-tenon joinery.",
     img: "/rooms/dining_02.jpg",
     itemCount: "12 pieces",
@@ -40,7 +41,7 @@ const COLLECTIONS = [
   },
   {
     id: "work-from-home",
-    title: "The Scandinavian Home Studio",
+    title: "The Home Studio",
     subtitle: "Calm Productivity",
     desc: "Acoustically softened desk configurations, motorized sit/stand surfaces, and cable concealers engineered for creative concentration.",
     img: "/rooms/office_01.jpg",
@@ -51,10 +52,11 @@ const COLLECTIONS = [
 
 export default function CollectionsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
-      <Navbar />
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
+        <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Editorial Collections" }]} />
 
         <div className="my-8 text-center max-w-2xl mx-auto space-y-3">
@@ -65,7 +67,7 @@ export default function CollectionsPage() {
             Curated Architectural Edits
           </h1>
           <p className="text-xs sm:text-sm text-[#74736B] leading-relaxed">
-            Cohesive furniture ensembles crafted to bring balanced Scandinavian light, organic texture, and geometric stillness into your domestic spaces.
+            Cohesive furniture ensembles crafted to bring balanced natural light, organic texture, and geometric stillness into your domestic spaces.
           </p>
         </div>
 
@@ -113,6 +115,7 @@ export default function CollectionsPage() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

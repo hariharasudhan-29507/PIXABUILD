@@ -53,7 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <Navbar />
 
       <div className="border-b border-[var(--border-subtle)] bg-[var(--color-sand-beige)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--color-terracotta)] text-white text-xs font-bold">
               A
@@ -89,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         {children}
       </main>
 

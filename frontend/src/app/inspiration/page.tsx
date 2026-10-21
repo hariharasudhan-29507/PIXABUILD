@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Interior Design Inspiration & Journal — PixaBuild",
-  description: "Architectural guidance, Scandinavian spatial theory, furniture proportion essays, and material curation.",
+  description: "Architectural guidance, room styling inspiration, and curated furniture designs for timeless modern living.",
 };
 
 const ARTICLES = [

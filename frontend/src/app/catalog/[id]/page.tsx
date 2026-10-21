@@ -24,6 +24,7 @@ import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { FURNITURE_CATALOG, FurnitureItem } from "@/data/furnitureData";
 import { STORAGE_KEYS, recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
@@ -139,7 +140,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen flex flex-col bg-[#F6F3ED] text-[#292B26]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs
           items={[
             { label: "Catalog", href: "/catalog" },
@@ -284,15 +285,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {item.sale_price ? (
                   <>
                     <span className="text-2xl font-bold font-mono text-[#B8795C]">
-                      ${item.sale_price.toFixed(2)}
+                      {formatINR(item.sale_price)}
                     </span>
                     <span className="text-sm line-through font-mono text-[#8A7867]">
-                      ${item.price.toFixed(2)}
+                      {formatINR(item.price)}
                     </span>
                   </>
                 ) : (
                   <span className="text-2xl font-bold font-mono text-[#292B26]">
-                    ${item.price.toFixed(2)}
+                    {formatINR(item.price)}
                   </span>
                 )}
                 <span className="text-xs text-[#42483A] font-medium ms-2">

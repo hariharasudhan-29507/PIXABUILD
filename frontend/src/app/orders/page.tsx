@@ -7,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { STORAGE_KEYS } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 interface OrderData {
   order_id: string;
@@ -47,7 +48,7 @@ export default function OrdersPage() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Account", href: "/profile" }, { label: "My Orders" }]} />
 
         <div className="my-6 pb-4 border-b border-[var(--border-subtle)]">
@@ -95,7 +96,7 @@ export default function OrdersPage() {
                   <div className="text-right">
                     <span className="text-xs text-[#8C7965] block">{order.itemsCount} furniture piece(s)</span>
                     <span className="text-base font-bold font-mono text-[#30352D]">
-                      ${order.total.toFixed(2)}
+                      {formatINR(order.total)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-[#78816A] font-medium">

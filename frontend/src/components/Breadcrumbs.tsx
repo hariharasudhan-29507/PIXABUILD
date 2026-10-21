@@ -6,14 +6,14 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
-export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
+export function Breadcrumbs({ items = [] }: { items?: BreadcrumbItem[] }) {
   return (
     <nav aria-label="Breadcrumb" className="my-3 flex items-center gap-1.5 text-xs text-[var(--color-muted-taupe)]">
       <Link
         href="/"
-        className="flex items-center gap-1 hover:text-[var(--color-forest-charcoal)] transition-colors"
+        className="flex items-center gap-1 hover:text-[var(--color-forest-charcoal)] transition-colors p-0.5"
       >
-        <Home className="h-3.5 w-3.5" />
+        <Home className="h-5 w-5 stroke-[1.8] text-[#42483A] hover:text-[#2E3328]" />
         <span className="sr-only">Home</span>
       </Link>
       {items.map((item, idx) => {

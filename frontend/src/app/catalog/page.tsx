@@ -5,21 +5,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
-  SlidersHorizontal,
-  Sparkles,
   ShoppingBag,
   Eye,
   Check,
-  Tag,
   Clock,
-  Layers
+  ChevronLeft,
+  ChevronRight,
+  X
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { AuthGuard } from "@/components/AuthGuard";
 import { FURNITURE_CATALOG, CATEGORIES, FurnitureItem } from "@/data/furnitureData";
 import { getRecommendations, RecommendationResult } from "@/lib/recommendation";
 import { saveSearchQuery, getSearchHistory, STORAGE_KEYS, recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
+
+const ITEMS_PER_PAGE = 8; // 4 columns x 2 rows = 8 items per page
 
 export default function CatalogPage() {
   const router = useRouter();
@@ -28,6 +30,30 @@ export default function CatalogPage() {
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [recommendations, setRecommendations] = useState<RecommendationResult[]>([]);
   const [addedItem, setAddedItem] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Read URL query params on mount & handle focus
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get("q") || params.get("search");
+      const cat = params.get("category");
+      const shouldFocus = params.get("focusSearch") === "true";
+
+      if (q) setSearchTerm(q);
+      if (cat) setActiveCategory(cat);
+
+      if (shouldFocus) {
+        setTimeout(() => {
+          const input = document.getElementById("catalog-search-input") as HTMLInputElement | null;
+          if (input) {
+            input.focus();
+            input.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 150);
+      }
+    }
+  }, []);
 
   // Load search history and ML recommendations on mount
   useEffect(() => {
@@ -44,6 +70,7 @@ export default function CatalogPage() {
     const updated = getSearchHistory();
     setSearchHistory(updated);
     setRecommendations(getRecommendations(updated));
+    setCurrentPage(1);
   };
 
   const handleSelectHistoryPill = (query: string) => {
@@ -52,11 +79,15 @@ export default function CatalogPage() {
     const updated = getSearchHistory();
     setSearchHistory(updated);
     setRecommendations(getRecommendations(updated));
+    setCurrentPage(1);
   };
 
-  // Filtered items
-  const filteredItems = useMemo(() => {
-    return FURNITURE_CATALOG.filter((item) => {
+  // Determine if this is a new user (no search history)
+  const isNewUser = searchHistory.length === 0;
+
+  // Single unified product list: Recommended items first, others below, NO repetition
+  const { filteredItems, recommendedIds } = useMemo(() => {
+    const base = FURNITURE_CATALOG.filter((item) => {
       const matchesCategory =
         activeCategory === "All" || item.category.toLowerCase() === activeCategory.toLowerCase();
       const query = searchTerm.toLowerCase().trim();
@@ -68,7 +99,37 @@ export default function CatalogPage() {
         item.tags.some((t) => t.toLowerCase().includes(query));
       return matchesCategory && matchesSearch;
     });
+
+    const recIds = new Set<string>();
+
+    // For new users or when no recommendations exist: return standard list
+    if (isNewUser || recommendations.length === 0) {
+      return { filteredItems: base, recommendedIds: recIds };
+    }
+
+    // Returning user: Recommended pieces on TOP, other items on bottom, zero repetition
+    recommendations.forEach((r) => recIds.add(r.item.item_id));
+
+    const recommendedList = base.filter((item) => recIds.has(item.item_id));
+    const remainingList = base.filter((item) => !recIds.has(item.item_id));
+
+    return {
+      filteredItems: [...recommendedList, ...remainingList],
+      recommendedIds: recIds,
+    };
+  }, [searchTerm, activeCategory, isNewUser, recommendations]);
+
+  // Reset page when category or search changes
+  useEffect(() => {
+    setCurrentPage(1);
   }, [searchTerm, activeCategory]);
+
+  // Pagination calculation
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
 
   const handleAddToCart = (item: FurnitureItem) => {
     try {
@@ -100,70 +161,184 @@ export default function CatalogPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--color-forest-charcoal)]">
-      <Navbar />
+  // Render individual product card with exact matching dimensions, matching buttons, and clean spacing
+  const renderProductCard = (item: FurnitureItem) => {
+    const isAdded = addedItem === item.item_id;
+    const isRecommended = recommendedIds.has(item.item_id) && !isNewUser;
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Breadcrumbs items={[{ label: "IKEA Catalog" }]} />
-
-        {/* Header Title & Description */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 pb-4 border-b border-[var(--border-subtle)]">
-          <div>
-            <span className="text-[10px] font-accent uppercase tracking-widest text-[var(--color-muted-taupe)]">
-              Curated Inventory // IKEA Dataset v1.0
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-heading text-[var(--color-forest-charcoal)] mt-1">
-              FURNITURE CATALOG
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--color-muted-taupe)] font-body">
-              Browse 36+ Scandinavian designs. Select an item to check spatial fit in your room or buy directly.
-            </p>
+    return (
+      <div
+        key={item.item_id}
+        className="pixa-card bg-[var(--color-sand-beige)] border-[var(--border-subtle)] flex flex-col justify-between h-full p-5 rounded-2xl group transition-shadow hover:shadow-md"
+      >
+        <div>
+          {/* Image Container: Pure white studio mockup background, fills inner rounded rectangle */}
+          <div className="relative h-60 w-full rounded-xl bg-white overflow-hidden flex items-center justify-center border border-[var(--border-subtle)] p-2">
+            <img
+              src={item.image_url}
+              alt={item.name}
+              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            {item.is_sale && (
+              <span className="absolute top-2.5 left-2.5 bg-[var(--color-terracotta)] text-white text-[10px] font-accent uppercase tracking-wider font-bold px-2 py-0.5 rounded shadow-xs">
+                Sale Highlight
+              </span>
+            )}
+            {isRecommended && (
+              <span className="absolute top-2.5 right-2.5 bg-[#42483A] text-white text-[10px] font-accent uppercase tracking-wider font-semibold px-2 py-0.5 rounded shadow-xs">
+                Recommended
+              </span>
+            )}
           </div>
-          <div className="text-xs font-medium text-[var(--color-muted-taupe)] bg-[var(--color-sand-beige)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] self-start md:self-auto">
-            Showing <strong className="text-[var(--color-forest-charcoal)]">{filteredItems.length}</strong> verified items
+
+          {/* Metadata */}
+          <div className="mt-4 space-y-1.5">
+            <div className="flex items-center justify-between text-xs text-[var(--color-muted-taupe)]">
+              <span className="uppercase tracking-wider font-semibold text-[10px]">{item.category}</span>
+              <span className="text-[11px] font-medium text-[var(--color-sage-green)]">
+                {item.stock_count} units left
+              </span>
+            </div>
+
+            <h3 className="text-base font-heading text-[var(--color-forest-charcoal)] line-clamp-1">
+              {item.name}
+            </h3>
+
+            <p className="text-xs text-[var(--color-muted-taupe)] line-clamp-2 leading-relaxed min-h-[36px]">
+              {item.description}
+            </p>
+
+            <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[var(--color-forest-charcoal)] flex-wrap">
+              <span className="px-2 py-0.5 rounded bg-[var(--color-warm-ivory)] border border-[var(--border-subtle)]">
+                {item.color}
+              </span>
+              <span className="px-2 py-0.5 rounded bg-[var(--color-warm-ivory)] border border-[var(--border-subtle)] truncate max-w-[150px]">
+                {item.material}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="mb-6 space-y-3">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-taupe)]" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name, color (e.g. Terracotta, Charcoal), material (Oak, Linen)..."
-                className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-9 pr-3 py-2.5 text-xs text-[var(--color-forest-charcoal)] placeholder-[var(--color-muted-taupe)]/60 focus:border-[var(--color-sage-green)] focus:outline-none"
-              />
+        {/* Price & Actions: Stacked cleanly, zero overlap */}
+        <div className="mt-5 pt-3 border-t border-[var(--border-subtle)]">
+          {/* Dedicated Price Row */}
+          <div className="flex items-baseline justify-between gap-2 min-h-[28px]">
+            <div className="flex items-baseline gap-2">
+              {item.sale_price ? (
+                <>
+                  <span className="text-lg font-bold text-[var(--color-terracotta)] font-mono whitespace-nowrap">
+                    {formatINR(item.sale_price)}
+                  </span>
+                  <span className="text-xs line-through text-[var(--color-muted-taupe)] font-mono whitespace-nowrap">
+                    {formatINR(item.price)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-lg font-bold text-[var(--color-forest-charcoal)] font-mono whitespace-nowrap">
+                  {formatINR(item.price)}
+                </span>
+              )}
             </div>
-            <button type="submit" className="btn-primary text-xs px-4">
-              Search
-            </button>
-          </form>
+          </div>
 
-          {/* Search History Pills (Saved searches) */}
-          {searchHistory.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--color-muted-taupe)]">
-              <span className="flex items-center gap-1 font-medium text-[11px]">
-                <Clock className="h-3 w-3" /> Recent Searches:
-              </span>
-              {searchHistory.slice(0, 6).map((q, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSelectHistoryPill(q)}
-                  className="px-2 py-0.5 rounded-md bg-[var(--color-sand-beige)] hover:bg-[var(--color-sand-beige)]/70 text-[var(--color-forest-charcoal)] border border-[var(--border-subtle)] text-[11px] transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Equal Sized Action Buttons Grid (Identical height h-10 and equal width) */}
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <Link
+              href={`/visualize?item=${item.item_id}`}
+              className="h-10 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] hover:bg-white text-[var(--color-forest-charcoal)] text-xs font-medium flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              title="Check fit in room"
+            >
+              <Eye className="h-4 w-4 shrink-0" />
+              <span className="truncate">In Room</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => handleAddToCart(item)}
+              className="h-10 w-full rounded-lg bg-[var(--color-forest-charcoal)] hover:bg-[#1A1D18] text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              title="Add to Cart"
+            >
+              {isAdded ? (
+                <>
+                  <Check className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <span className="truncate">Added</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Buy</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--color-forest-charcoal)]">
+        <Navbar />
+
+        <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
+          {/* Header Title */}
+          <div className="mb-6 pb-4 border-b border-[var(--border-subtle)]">
+            <h1 className="text-3xl sm:text-4xl font-heading text-[var(--color-forest-charcoal)]">
+              FURNITURE CATALOG
+            </h1>
+          </div>
+
+          {/* Clean Search Bar */}
+          <div className="mb-8 space-y-4">
+            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2.5 w-full max-w-sm sm:max-w-md">
+              <div className="relative flex-1 flex items-center">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-taupe)]" />
+                <input
+                  id="catalog-search-input"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="start searching"
+                  className="w-full h-10 rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-10 pr-9 text-xs text-[var(--color-forest-charcoal)] placeholder-[var(--color-muted-taupe)]/60 focus:border-[var(--color-sage-green)] focus:outline-none"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-taupe)] hover:text-[var(--color-forest-charcoal)]"
+                    title="Clear search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+              <button type="submit" className="btn-primary h-10 text-xs px-5 flex items-center justify-center shrink-0">
+                Search
+              </button>
+            </form>
+
+            {/* Search History Pills (Saved searches) */}
+            {searchHistory.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--color-muted-taupe)]">
+                <span className="flex items-center gap-1 font-medium text-[11px]">
+                  <Clock className="h-3 w-3" /> Recent Searches:
+                </span>
+                {searchHistory.slice(0, 6).map((q, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSelectHistoryPill(q)}
+                    className="px-2 py-0.5 rounded-md bg-[var(--color-sand-beige)] hover:bg-[var(--color-sand-beige)]/70 text-[var(--color-forest-charcoal)] border border-[var(--border-subtle)] text-[11px] transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Category Tabs */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 mb-8">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -179,188 +354,109 @@ export default function CatalogPage() {
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Machine Learning Recommendations Row */}
-        {recommendations.length > 0 && (
-          <div className="mb-10 p-5 rounded-xl bg-[var(--color-sand-beige)] border border-[var(--color-terracotta)]/25">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[var(--color-terracotta)] text-white">
-                  <Sparkles className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-heading text-[var(--color-forest-charcoal)]">
-                    MACHINE LEARNING RECOMMENDATIONS
-                  </h3>
-                  <p className="text-[11px] text-[var(--color-muted-taupe)]">
-                    Ranked via TF-IDF Vector Space Model & Cosine Similarity based on your recent searches
-                  </p>
-                </div>
-              </div>
-              <span className="hidden sm:inline-block text-[11px] font-accent text-[var(--color-terracotta)] uppercase tracking-wider font-semibold">
-                Algorithm: Cosine Vector Match
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {recommendations.map((rec) => (
-                <div
-                  key={rec.item.item_id}
-                  className="bg-[var(--color-warm-ivory)] rounded-lg p-3 border border-[var(--border-subtle)] flex flex-col justify-between"
+          {/* Main Furniture Catalog Grid: Exactly 4 products per row (4 columns), Recommended on top, No duplicates */}
+          <div id="catalog-section" className="scroll-mt-6">
+            {filteredItems.length === 0 ? (
+              <div className="text-center py-16 bg-[var(--color-sand-beige)] rounded-2xl border border-[var(--border-subtle)] my-4">
+                <h3 className="font-heading text-lg text-[var(--color-forest-charcoal)]">
+                  No Matching Furniture Found
+                </h3>
+                <p className="text-xs text-[var(--color-muted-taupe)] mt-1">
+                  Try adjusting your search query or selecting a different category.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setActiveCategory("All");
+                  }}
+                  className="btn-primary text-xs px-4 py-2 mt-4"
                 >
-                  <div>
-                    <div className="relative h-32 w-full overflow-hidden rounded-md bg-white/40 mb-2.5 flex items-center justify-center">
-                      <img
-                        src={rec.item.image_url}
-                        alt={rec.item.name}
-                        className="max-h-28 max-w-full object-contain"
-                      />
-                      <span className="absolute top-1.5 right-1.5 bg-[var(--color-terracotta)] text-white text-[10px] px-1.5 py-0.5 rounded font-mono font-medium">
-                        {Math.round(rec.similarityScore * 100)}% match
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-accent text-[var(--color-muted-taupe)] block mb-0.5">
-                      {rec.reason}
-                    </span>
-                    <h4 className="text-xs font-semibold text-[var(--color-forest-charcoal)] line-clamp-1">
-                      {rec.item.name}
-                    </h4>
-                    <p className="text-xs font-bold text-[var(--color-forest-charcoal)] mt-1">
-                      ${rec.item.sale_price ? rec.item.sale_price.toFixed(2) : rec.item.price.toFixed(2)}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-1.5 mt-3 pt-2 border-t border-[var(--border-subtle)]">
-                    <Link
-                      href={`/visualize?item=${rec.item.item_id}`}
-                      className="btn-secondary text-[11px] py-1 px-1.5 text-center flex items-center justify-center gap-1"
-                    >
-                      <Eye className="h-3 w-3" />
-                      <span>In Room</span>
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => handleAddToCart(rec.item)}
-                      className="btn-primary text-[11px] py-1 px-1.5 flex items-center justify-center gap-1"
-                    >
-                      <ShoppingBag className="h-3 w-3" />
-                      <span>Buy</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Main Furniture Catalog Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item) => {
-            const isAdded = addedItem === item.item_id;
-            return (
-              <div
-                key={item.item_id}
-                className="pixa-card bg-[var(--color-sand-beige)] border-[var(--border-subtle)] flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Image Container */}
-                  <div className="relative h-56 w-full rounded-lg bg-[var(--color-warm-ivory)] overflow-hidden flex items-center justify-center p-4 border border-[var(--border-subtle)]">
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      className="max-h-48 max-w-full object-contain transition-transform duration-200 group-hover:scale-105"
-                    />
-                    {item.is_sale && (
-                      <span className="absolute top-2.5 left-2.5 bg-[var(--color-terracotta)] text-white text-[10px] font-accent uppercase tracking-wider font-bold px-2 py-0.5 rounded">
-                        Sale Highlight
-                      </span>
-                    )}
-                    <span className="absolute bottom-2.5 right-2.5 bg-[var(--color-warm-ivory)]/90 text-[var(--color-muted-taupe)] text-[10px] px-2 py-0.5 rounded border border-[var(--border-subtle)]">
-                      {item.dimensions}
-                    </span>
-                  </div>
-
-                  {/* Metadata */}
-                  <div className="mt-4 space-y-1">
-                    <div className="flex items-center justify-between text-xs text-[var(--color-muted-taupe)]">
-                      <span>{item.category}</span>
-                      <span className="text-[11px] font-medium text-[var(--color-sage-green)]">
-                        {item.stock_count} units left
-                      </span>
-                    </div>
-                    <h3 className="text-base font-heading text-[var(--color-forest-charcoal)]">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-[var(--color-muted-taupe)] line-clamp-2 leading-relaxed">
-                      {item.description}
-                    </p>
-                    <div className="flex items-center gap-2 pt-1 text-[11px] text-[var(--color-forest-charcoal)]">
-                      <span className="px-2 py-0.5 rounded bg-[var(--color-warm-ivory)] border border-[var(--border-subtle)]">
-                        {item.color}
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-[var(--color-warm-ivory)] border border-[var(--border-subtle)]">
-                        {item.material}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Price and Actions */}
-                <div className="mt-5 pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between gap-2">
-                  <div>
-                    {item.sale_price ? (
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-lg font-bold text-[var(--color-terracotta)] font-mono">
-                          ${item.sale_price.toFixed(2)}
-                        </span>
-                        <span className="text-xs line-through text-[var(--color-muted-taupe)] font-mono">
-                          ${item.price.toFixed(2)}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-lg font-bold text-[var(--color-forest-charcoal)] font-mono">
-                        ${item.price.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <Link
-                      href={`/visualize?item=${item.item_id}`}
-                      className="btn-secondary text-xs py-1.5 px-3"
-                      title="Check fit in room"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>Check in Room</span>
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => handleAddToCart(item)}
-                      className="btn-primary text-xs py-1.5 px-3"
-                      title="Add to Cart"
-                    >
-                      {isAdded ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-white" />
-                          <span>Added</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag className="h-3.5 w-3.5" />
-                          <span>Buy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                  Clear Filters
+                </button>
+              </div>
+            ) : paginatedItems.length === 1 ? (
+              /* If a single product, center the product */
+              <div className="flex justify-center w-full py-4">
+                <div className="w-full max-w-sm">
+                  {renderProductCard(paginatedItems[0])}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </main>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {paginatedItems.map((item) => renderProductCard(item))}
+              </div>
+            )}
+          </div>
 
-      <Footer />
-    </div>
+          {/* Numbered Pagination with Previous/Next Navigation */}
+          {totalPages > 1 && (
+            <div className="mt-12 pt-6 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-xs text-[var(--color-muted-taupe)] font-medium">
+                Showing <strong className="text-[var(--color-forest-charcoal)]">{(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)}</strong> of <strong className="text-[var(--color-forest-charcoal)]">{filteredItems.length}</strong> items
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Backward Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentPage((prev) => Math.max(1, prev - 1));
+                    const el = document.getElementById("catalog-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] hover:bg-white text-xs font-medium text-[var(--color-forest-charcoal)] disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+                  title="Previous Page"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Previous</span>
+                </button>
+
+                {/* Page Number Buttons */}
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => {
+                        setCurrentPage(pageNum);
+                        const el = document.getElementById("catalog-section");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className={`h-9 w-9 rounded-lg text-xs font-mono font-medium transition-colors ${
+                        currentPage === pageNum
+                          ? "bg-[var(--color-forest-charcoal)] text-white shadow-xs"
+                          : "bg-[var(--color-sand-beige)] hover:bg-white text-[var(--color-forest-charcoal)] border border-[var(--border-subtle)]"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+                    const el = document.getElementById("catalog-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] hover:bg-white text-xs font-medium text-[var(--color-forest-charcoal)] disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+                  title="Next Page"
+                >
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </main>
+
+        <Footer />
+      </div>
+    </AuthGuard>
   );
 }

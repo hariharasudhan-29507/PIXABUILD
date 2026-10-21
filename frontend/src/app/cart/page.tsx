@@ -19,6 +19,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { STORAGE_KEYS, recordActivity, getCurrentUser } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 interface CartItemData {
   cart_id: string;
@@ -96,7 +97,7 @@ export default function CartPage() {
   };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal > 300 || subtotal === 0 ? 0 : 35;
+  const shipping = subtotal > 15000 || subtotal === 0 ? 0 : 1499;
   const total = subtotal + shipping;
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
@@ -130,7 +131,7 @@ export default function CartPage() {
     <div className="min-h-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--color-forest-charcoal)]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Catalog", href: "/catalog" }, { label: "Shopping Cart" }]} />
 
         {/* Title */}
@@ -152,7 +153,7 @@ export default function CartPage() {
               ORDER CONFIRMED!
             </h2>
             <p className="text-xs text-[var(--color-muted-taupe)]">
-              Your order <strong className="font-mono text-[var(--color-forest-charcoal)]">{orderComplete}</strong> has been logged to your account and forwarded to our regional IKEA warehouse for white-glove delivery.
+              Your order <strong className="font-mono text-[var(--color-forest-charcoal)]">{orderComplete}</strong> has been logged to your account and forwarded to our regional logistics warehouse for white-glove delivery.
             </p>
             <div className="pt-4 flex items-center justify-center gap-3">
               <Link href="/catalog" className="btn-primary text-xs py-2 px-4">
@@ -199,7 +200,7 @@ export default function CartPage() {
                         Color: {item.color}
                       </p>
                       <p className="text-xs font-mono font-bold text-[var(--color-forest-charcoal)] mt-1">
-                        ${item.price.toFixed(2)} each
+                        {formatINR(item.price)} each
                       </p>
                     </div>
                   </div>
@@ -246,17 +247,17 @@ export default function CartPage() {
                 <div className="space-y-2 text-xs text-[var(--color-forest-charcoal)]">
                   <div className="flex justify-between">
                     <span className="text-[var(--color-muted-taupe)]">Subtotal</span>
-                    <span className="font-mono font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-mono font-medium">{formatINR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--color-muted-taupe)]">Spatial Delivery</span>
                     <span className="font-mono font-medium">
-                      {shipping === 0 ? "FREE (Orders > $300)" : `$${shipping.toFixed(2)}`}
+                      {shipping === 0 ? "FREE (Orders > Rs. 15,000)" : formatINR(shipping)}
                     </span>
                   </div>
                   <div className="flex justify-between border-t border-[var(--border-subtle)] pt-2 text-sm font-bold">
                     <span>Total Amount</span>
-                    <span className="font-mono text-[var(--color-terracotta)]">${total.toFixed(2)}</span>
+                    <span className="font-mono text-[var(--color-terracotta)]">{formatINR(total)}</span>
                   </div>
                 </div>
 
@@ -334,7 +335,7 @@ export default function CartPage() {
                       disabled={isSubmitting}
                       className="btn-terracotta w-full py-2.5 text-xs font-medium"
                     >
-                      {isSubmitting ? "Confirming Order..." : `Complete Purchase ($${total.toFixed(2)})`}
+                      {isSubmitting ? "Confirming Order..." : `Complete Purchase (${formatINR(total)})`}
                     </button>
                   </form>
                 )}

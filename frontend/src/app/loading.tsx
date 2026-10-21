@@ -1,21 +1,12 @@
-import { Layers } from "lucide-react";
-
 export default function Loading() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center bg-[var(--bg-canvas)] text-[var(--color-forest-charcoal)] px-4">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F6F3ED] text-[#292B26] px-4">
       <div className="relative flex items-center justify-center mb-4">
-        {/* Pulsing ring */}
-        <div className="h-16 w-16 rounded-2xl bg-[var(--color-sand-beige)] animate-ping opacity-30 absolute"></div>
-        <div className="h-14 w-14 rounded-2xl bg-[var(--color-sage-green)] text-white flex items-center justify-center shadow-md relative z-10 animate-bounce">
-          <Layers className="h-7 w-7" />
-        </div>
+        <div className="h-12 w-12 rounded-full border-3 border-[#DCD6CB] border-t-[#292B26] animate-spin" />
       </div>
-      <span className="font-heading text-lg text-[var(--color-forest-charcoal)] tracking-wider">
-        PIXABUILD SPATIAL ENGINE
+      <span className="text-sm tracking-widest uppercase font-medium text-[#292B26]">
+        Loading
       </span>
-      <p className="text-xs text-[var(--color-muted-taupe)] font-mono mt-1 animate-pulse">
-        Loading neural weights & catalog tensors...
-      </p>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { FURNITURE_CATALOG, FurnitureItem } from "@/data/furnitureData";
 import { saveSearchQuery, getSearchHistory, STORAGE_KEYS, recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -49,7 +50,7 @@ function SearchContent() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Catalog", href: "/catalog" }, { label: "Search" }]} />
 
         {/* Large Accessible Search Header */}
@@ -58,7 +59,7 @@ function SearchContent() {
             Catalog Vector Index
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl text-[#30352D]">
-            Search Scandinavian Furniture
+            Search Furniture Catalog
           </h1>
 
           <form onSubmit={handleSearch} className="relative mt-4">
@@ -67,7 +68,7 @@ function SearchContent() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Try 'Oak dining table', 'Terracotta sofa', 'Linen armchair'..."
+              placeholder="start searching"
               className="w-full rounded-full border border-[var(--border-strong)] bg-[#FFFFFF] pl-12 pr-28 py-3.5 text-sm text-[#30352D] placeholder-[#74736B]/60 shadow-xs focus:border-[#78816A] focus:outline-none"
             />
             <button
@@ -122,7 +123,7 @@ function SearchContent() {
         {results.length === 0 ? (
           <div className="text-center py-20 pixa-card bg-[#FFFFFF] max-w-md mx-auto space-y-3">
             <Compass className="h-8 w-8 text-[#8C7965] mx-auto opacity-50" />
-            <h3 className="font-serif text-lg text-[#30352D]">No Matching Scandinavian Designs</h3>
+            <h3 className="font-serif text-lg text-[#30352D]">No Matching Designs</h3>
             <p className="text-xs text-[#74736B]">
               We couldn&apos;t find an exact match. Try adjusting your search query or exploring our primary collections.
             </p>
@@ -134,7 +135,7 @@ function SearchContent() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
             {results.map((item) => (
               <Link
                 key={item.item_id}
@@ -157,7 +158,7 @@ function SearchContent() {
                   </h4>
                   <div className="flex items-center justify-between pt-1">
                     <span className="text-xs font-mono font-bold text-[#30352D]">
-                      ${item.sale_price || item.price}
+                      {formatINR(item.sale_price || item.price)}
                     </span>
                     <span className="text-[10px] text-[#78816A] underline">
                       View Details →

@@ -4,6 +4,7 @@ import { Eye, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export const metadata: Metadata = {
   title: "Shop by Rooms — PixaBuild",
@@ -60,10 +61,11 @@ const ROOMS = [
 
 export default function RoomsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F6F3ED] text-[#292B26]">
-      <Navbar />
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-[#F6F3ED] text-[#292B26]">
+        <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Shop by Rooms" }]} />
 
         <div className="my-8 text-center max-w-2xl mx-auto space-y-3">
@@ -164,6 +166,7 @@ export default function RoomsPage() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

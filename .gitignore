@@ -230,3 +230,6 @@ __marimo__/
 ikea_dataset_repo/
 frontend/.next/
 frontend/node_modules/
+
+results/
+assets/New folder/

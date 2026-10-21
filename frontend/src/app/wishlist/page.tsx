@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { FURNITURE_CATALOG, FurnitureItem } from "@/data/furnitureData";
 import { STORAGE_KEYS, recordActivity } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState<FurnitureItem[]>([]);
@@ -61,7 +62,7 @@ export default function WishlistPage() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Wishlist" }]} />
 
         <div className="flex items-end justify-between pb-4 border-b border-[var(--border-subtle)] my-6">
@@ -84,14 +85,14 @@ export default function WishlistPage() {
             <Heart className="h-10 w-10 text-[#8C7965] mx-auto opacity-35" />
             <h3 className="font-serif text-xl text-[#30352D]">Your Wishlist is Empty</h3>
             <p className="text-xs text-[#74736B]">
-              Save Scandinavian sofas, tables, and lounge chairs as you explore the catalog to stage them together.
+              Save sofas, tables, and lounge chairs as you explore the catalog to stage them together.
             </p>
             <Link href="/catalog" className="btn-primary text-xs py-2.5 px-5 inline-flex">
               Explore Furniture Catalog
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
             {wishlistItems.map((item) => (
               <div
                 key={item.item_id}
@@ -125,7 +126,7 @@ export default function WishlistPage() {
 
                 <div className="mt-5 pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between">
                   <span className="text-base font-bold font-mono text-[#30352D]">
-                    ${item.sale_price || item.price}
+                    {formatINR(item.sale_price || item.price)}
                   </span>
                   <div className="flex items-center gap-2">
                     <Link

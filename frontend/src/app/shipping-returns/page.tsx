@@ -41,7 +41,7 @@ export default function ShippingReturnsPage() {
               Standard parcel shipping is unsuitable for high-end upholstered sofas and solid oak tables. Every PixaBuild order is routed through our specialized furniture freight network with scheduled delivery appointment windows.
             </p>
             <ul className="text-xs text-[#74736B] space-y-1.5 list-disc pl-5 pt-1">
-              <li>Free white-glove delivery on all orders exceeding $300.</li>
+              <li>Free white-glove delivery on all orders exceeding Rs. 3,000.</li>
               <li>Room-of-choice placement and packaging disposal included at no added cost.</li>
               <li>Estimated transit window: 3–7 business days depending on postal zone.</li>
             </ul>

@@ -24,6 +24,7 @@ import {
   CartesianGrid
 } from "recharts";
 import { STORAGE_KEYS } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 interface ActivityItem {
   id: string;
@@ -130,7 +131,7 @@ export default function AdminDashboardPage() {
             <ShoppingBag className="h-4 w-4 text-[var(--color-terracotta)]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[var(--color-terracotta)]">
-            ${totalRevenue.toLocaleString()}
+            {formatINR(totalRevenue)}
           </div>
           <div className="text-[11px] text-[var(--color-muted-taupe)]">
             {totalOrders} validated shipments

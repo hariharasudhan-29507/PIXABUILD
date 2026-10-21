@@ -8,11 +8,12 @@ import { z } from "zod";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { STORAGE_KEYS, recordActivity, getCurrentUser } from "@/lib/supabase";
+import { STORAGE_KEYS, recordActivity, getCurrentUser, recordOrderToSupabase } from "@/lib/supabase";
+import { formatINR } from "@/lib/format";
 
 const checkoutSchema = z.object({
-  firstName: z.string().min(2, "First name is required"),
-  lastName: z.string().min(2, "Last name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Valid email address is required"),
   address: z.string().min(6, "Street address is required"),
   city: z.string().min(2, "City is required"),
@@ -54,7 +55,7 @@ export default function CheckoutPage() {
   }, []);
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-  const shipping = subtotal > 300 || subtotal === 0 ? 0 : 35;
+  const shipping = subtotal > 15000 || subtotal === 0 ? 0 : 1499;
   const total = subtotal + shipping;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,30 +73,23 @@ export default function CheckoutPage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const newOrderId = "SE-" + Math.floor(100000 + Math.random() * 900000);
       setIsSubmitting(false);
       setOrderId(newOrderId);
 
-      // Save order to orders history
-      try {
-        const rawOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
-        const orders = rawOrders ? JSON.parse(rawOrders) : [];
-        orders.unshift({
-          order_id: newOrderId,
-          date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-          total,
-          itemsCount: cart.length,
-          status: "Confirmed",
-          shipping_city: form.city,
-        });
-        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
-      } catch {}
+      // Save order to Supabase orders table and history
+      await recordOrderToSupabase({
+        order_id: newOrderId,
+        total,
+        items_count: cart.length,
+        shipping_address: form,
+        payment_method: paymentMethod,
+      });
 
       // Clear cart
       localStorage.removeItem(STORAGE_KEYS.CART);
       window.dispatchEvent(new Event("cart_updated"));
-      recordActivity("CHECKOUT_COMPLETED", { orderId: newOrderId, total });
     }, 600);
   };
 
@@ -103,7 +97,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#30352D]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-8">
         <Breadcrumbs items={[{ label: "Cart", href: "/cart" }, { label: "Checkout" }]} />
 
         {orderId ? (
@@ -115,7 +109,7 @@ export default function CheckoutPage() {
               ORDER {orderId} VERIFIED
             </h1>
             <p className="text-xs text-[#74736B] leading-relaxed">
-              Your shipping confirmation has been dispatched to <strong>{form.email}</strong>. Our Scandinavian logistics team will coordinate freight delivery to <strong>{form.city}</strong>.
+              Your shipping confirmation has been dispatched to <strong>{form.email}</strong>. Our logistics team will coordinate freight delivery to <strong>{form.city}</strong>.
             </p>
             <div className="pt-4 flex items-center justify-center gap-3">
               <Link href="/orders" className="btn-primary text-xs py-2.5 px-4">
@@ -262,7 +256,7 @@ export default function CheckoutPage() {
                   disabled={isSubmitting || cart.length === 0}
                   className="btn-primary w-full py-3 text-xs justify-center"
                 >
-                  {isSubmitting ? "Finalizing Order..." : `Place Order ($${total.toFixed(2)})`}
+                  {isSubmitting ? "Finalizing Order..." : `Place Order (${formatINR(total)})`}
                 </button>
               </form>
             </div>
@@ -278,7 +272,7 @@ export default function CheckoutPage() {
                   {cart.map((i, idx) => (
                     <div key={idx} className="flex justify-between pt-2">
                       <span className="text-[#30352D]">{i.name} × {i.quantity}</span>
-                      <span className="font-mono">${(i.price * i.quantity).toFixed(2)}</span>
+                      <span className="font-mono">{formatINR(i.price * i.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -286,15 +280,15 @@ export default function CheckoutPage() {
                 <div className="border-t border-[var(--border-subtle)] pt-3 space-y-1.5 text-xs text-[#74736B]">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="font-mono text-[#30352D]">${subtotal.toFixed(2)}</span>
+                    <span className="font-mono text-[#30352D]">{formatINR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Freight Delivery</span>
-                    <span className="font-mono text-[#30352D]">{shipping === 0 ? "FREE" : `$${shipping}`}</span>
+                    <span className="font-mono text-[#30352D]">{shipping === 0 ? "FREE" : formatINR(shipping)}</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold text-[#30352D] pt-2 border-t border-[var(--border-subtle)]">
                     <span>Total Due</span>
-                    <span className="font-mono text-[#B96E4B]">${total.toFixed(2)}</span>
+                    <span className="font-mono text-[#B96E4B]">{formatINR(total)}</span>
                   </div>
                 </div>
 

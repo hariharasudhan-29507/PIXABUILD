@@ -5,10 +5,10 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://pixabuild.vercel.app"),
   title: {
-    default: "PixaBuild — Spatial AI Furniture & Architecture",
+    default: "PixaBuild — Modern Furniture & Living",
     template: "%s | PixaBuild"
   },
-  description: "Imagine it. Before it's yours. Curated Scandinavian furniture with spatial room visualization and photorealistic architectural staging.",
+  description: "Imagine it. Before it's yours. Curated modern furniture with spatial room visualization and photorealistic architectural staging.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "PixaBuild — Minimalist Spatial Furniture",
-    description: "Imagine it. Before it's yours. Discover curated Scandinavian designs and stage them inside your real room.",
+    description: "Imagine it. Before it's yours. Discover curated designs and stage them inside your real room.",
     url: "https://pixabuild.local",
     siteName: "PixaBuild",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         url: "/hero_furniture.png",
         width: 1536,
         height: 1024,
-        alt: "PixaBuild Scandinavian Armchair in Daylight Interior",
+        alt: "PixaBuild Armchair in Daylight Interior",
       },
     ],
     locale: "en_US",

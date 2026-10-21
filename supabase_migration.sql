@@ -1,91 +1,77 @@
--- PixaBuild: Additional tables for orders, admin, and activity tracking
--- Run this in Supabase SQL Editor
+-- ============================================================
+-- PixaBuild: Supabase Database Schema Migration
+-- Run this in your Supabase Dashboard -> SQL Editor -> Click "Run"
+-- ============================================================
 
--- Add role column to users table
+-- 1. Ensure user columns exist
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'user';
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS avatar_url text;
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_locked boolean NOT NULL DEFAULT false;
 
--- Insert default admin user (password: admin123 → bcrypt hash)
-INSERT INTO public.users (first_name, last_name, email, password_hash, role, status)
-VALUES (
-  'Admin',
-  'PixaBuild',
-  'admin',
-  '$2b$10$rQZ8kHzN8e5s5g5j5j5j5OYqYqYqYqYqYqYqYqYqYqYqYqYqYqYq',
-  'admin',
-  'active'
-) ON CONFLICT (email) DO NOTHING;
-
--- Orders table
+-- 2. Orders Table (Supports guest or member orders)
 CREATE TABLE IF NOT EXISTS public.orders (
-  order_id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  item_id uuid NOT NULL,
-  visualization_id uuid,
+  order_id text PRIMARY KEY,
+  user_id uuid REFERENCES public.users(user_id) ON DELETE SET NULL,
+  total_price numeric NOT NULL DEFAULT 0,
   quantity integer NOT NULL DEFAULT 1,
-  unit_price numeric NOT NULL,
-  total_price numeric NOT NULL,
-  status text NOT NULL DEFAULT 'pending',
+  status text NOT NULL DEFAULT 'Confirmed',
   shipping_address jsonb,
   payment_method text DEFAULT 'cod',
   notes text,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT orders_pkey PRIMARY KEY (order_id),
-  CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),
-  CONSTRAINT orders_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.furniture_items(item_id)
+  updated_at timestamp with time zone NOT NULL DEFAULT now()
 );
 
--- Activity log for admin monitoring
+-- 3. Activity Log Table
 CREATE TABLE IF NOT EXISTS public.activity_log (
-  log_id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid,
+  log_id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES public.users(user_id) ON DELETE SET NULL,
   action text NOT NULL,
-  entity_type text,
-  entity_id text,
   details jsonb,
-  ip_address text,
-  user_agent text,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT activity_log_pkey PRIMARY KEY (log_id),
-  CONSTRAINT activity_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+  created_at timestamp with time zone NOT NULL DEFAULT now()
 );
 
--- Recommendations cache
-CREATE TABLE IF NOT EXISTS public.recommendations (
-  rec_id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  item_ids uuid[] NOT NULL,
-  scores numeric[] NOT NULL,
-  algorithm text NOT NULL DEFAULT 'cosine_similarity',
-  expires_at timestamp with time zone NOT NULL DEFAULT (now() + interval '24 hours'),
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT recommendations_pkey PRIMARY KEY (rec_id),
-  CONSTRAINT recommendations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id)
-);
-
--- Cart items
+-- 4. Cart Items Table
 CREATE TABLE IF NOT EXISTS public.cart_items (
-  cart_item_id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  item_id uuid NOT NULL,
+  cart_item_id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES public.users(user_id) ON DELETE CASCADE,
+  item_id uuid REFERENCES public.furniture_items(item_id) ON DELETE CASCADE,
   quantity integer NOT NULL DEFAULT 1,
-  visualization_id uuid,
-  added_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT cart_items_pkey PRIMARY KEY (cart_item_id),
-  CONSTRAINT cart_items_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),
-  CONSTRAINT cart_items_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.furniture_items(item_id)
+  added_at timestamp with time zone NOT NULL DEFAULT now()
 );
 
--- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_furniture_items_category ON public.furniture_items(category);
-CREATE INDEX IF NOT EXISTS idx_furniture_items_catalog ON public.furniture_items(catalog_id);
-CREATE INDEX IF NOT EXISTS idx_orders_user ON public.orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(status);
-CREATE INDEX IF NOT EXISTS idx_activity_log_user ON public.activity_log(user_id);
-CREATE INDEX IF NOT EXISTS idx_activity_log_created ON public.activity_log(created_at);
-CREATE INDEX IF NOT EXISTS idx_search_history_user ON public.user_search_history(user_id);
-CREATE INDEX IF NOT EXISTS idx_cart_items_user ON public.cart_items(user_id);
-CREATE INDEX IF NOT EXISTS idx_generation_requests_user ON public.generation_requests(user_id);
-CREATE INDEX IF NOT EXISTS idx_generation_requests_status ON public.generation_requests(status);
+-- 5. User Search History
+CREATE TABLE IF NOT EXISTS public.user_search_history (
+  history_id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES public.users(user_id) ON DELETE CASCADE,
+  query text NOT NULL,
+  category text,
+  created_at timestamp with time zone NOT NULL DEFAULT now()
+);
+
+-- 6. Enable Row Level Security (RLS) & Public Policies for Anon Access
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activity_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cart_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.furniture_items ENABLE ROW LEVEL SECURITY;
+
+-- Allow anon public read access to catalog
+DO $$ BEGIN
+  CREATE POLICY "Public read catalog" ON public.furniture_items FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Allow anon read/write to orders
+DO $$ BEGIN
+  CREATE POLICY "Public orders access" ON public.orders FOR ALL USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Allow anon logging
+DO $$ BEGIN
+  CREATE POLICY "Public activity logging" ON public.activity_log FOR ALL USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Allow users access
+DO $$ BEGIN
+  CREATE POLICY "Public users access" ON public.users FOR ALL USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fjalla+One&family=Lexend:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Comfortaa:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fjalla+One&family=Lexend:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -59,6 +59,11 @@ html, body {
 .font-heading {
   font-family: var(--font-heading);
   letter-spacing: 0.02em;
+}
+
+.font-brand {
+  font-family: 'Bodoni Moda', Georgia, serif;
+  font-optical-sizing: auto;
 }
 
 .font-body {
@@ -200,4 +205,43 @@ html, body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-forest-charcoal);
+}
+
+/* 3D FAQ Marquee Keyframes for Auth Backgrounds - Mathematically Seamless 60fps Loop */
+@keyframes marqueeInfiniteUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes marqueeInfiniteDown {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-marquee-infinite-up {
+  animation: marqueeInfiniteUp 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-down {
+  animation: marqueeInfiniteDown 48s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-up-slow {
+  animation: marqueeInfiniteUp 54s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-down-slow {
+  animation: marqueeInfiniteDown 50s linear infinite;
+  will-change: transform;
 }
