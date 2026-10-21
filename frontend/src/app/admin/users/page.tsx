@@ -12,7 +12,7 @@ import {
   Search
 } from "lucide-react";
 import { z } from "zod";
-import { STORAGE_KEYS, recordActivity, UserSession } from "@/lib/supabase";
+import { supabase, STORAGE_KEYS, recordActivity, UserSession, DEFAULT_ADMIN } from "@/lib/supabase";
 
 const userCreateSchema = z.object({
   firstName: z.string().min(2, "First name required"),
@@ -69,17 +69,47 @@ export default function AdminUsersPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.USERS_LIST);
-      if (raw) {
-        setUsers(JSON.parse(raw));
-      } else {
-        setUsers(INITIAL_USERS);
-        localStorage.setItem(STORAGE_KEYS.USERS_LIST, JSON.stringify(INITIAL_USERS));
+    async function loadUsers() {
+      try {
+        const { data } = await supabase
+          .from("users")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (data && data.length > 0) {
+          const mapped: UserSession[] = data.map((u: Record<string, unknown>) => ({
+            user_id: String(u.user_id),
+            email: String(u.email),
+            first_name: String(u.first_name || "Member"),
+            last_name: String(u.last_name || ""),
+            role: (u.role as "user" | "admin") || "user",
+            status: (u.status as "active" | "locked") || "active",
+          }));
+          if (!mapped.some((u) => u.email === "admin")) {
+            mapped.unshift(DEFAULT_ADMIN);
+          }
+          setUsers(mapped);
+          localStorage.setItem(STORAGE_KEYS.USERS_LIST, JSON.stringify(mapped));
+          return;
+        }
+      } catch (err) {
+        console.warn("Supabase fetch users notice:", err);
       }
-    } catch {
-      setUsers(INITIAL_USERS);
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.USERS_LIST);
+        if (raw) {
+          setUsers(JSON.parse(raw));
+        } else {
+          setUsers(INITIAL_USERS);
+          localStorage.setItem(STORAGE_KEYS.USERS_LIST, JSON.stringify(INITIAL_USERS));
+        }
+      } catch {
+        setUsers(INITIAL_USERS);
+      }
     }
+
+    loadUsers();
   }, []);
 
   const saveUsers = (updated: UserSession[]) => {
@@ -87,7 +117,7 @@ export default function AdminUsersPage() {
     localStorage.setItem(STORAGE_KEYS.USERS_LIST, JSON.stringify(updated));
   };
 
-  const toggleLock = (userId: string) => {
+  const toggleLock = async (userId: string) => {
     const target = users.find((u) => u.user_id === userId);
     if (!target) return;
     if (target.email === "admin") {
@@ -99,9 +129,13 @@ export default function AdminUsersPage() {
     const updated = users.map((u) => (u.user_id === userId ? { ...u, status: newStatus as "active" | "locked" } : u));
     saveUsers(updated);
     recordActivity("USER_STATUS_TOGGLED", { user_id: userId, email: target.email, newStatus });
+
+    try {
+      await supabase.from("users").update({ status: newStatus }).eq("user_id", userId);
+    } catch {}
   };
 
-  const handleCreateUser = (e: React.FormEvent) => {
+  const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     const res = userCreateSchema.safeParse(newForm);
@@ -122,6 +156,26 @@ export default function AdminUsersPage() {
       role: newForm.role,
       status: "active",
     };
+
+    try {
+      const { data } = await supabase
+        .from("users")
+        .insert({
+          first_name: newForm.firstName,
+          last_name: newForm.lastName,
+          email: newForm.email,
+          password_hash: "admin_created",
+          status: "active",
+        })
+        .select()
+        .single();
+
+      if (data?.user_id) {
+        newUser.user_id = data.user_id;
+      }
+    } catch (e) {
+      console.warn("Supabase user create notice:", e);
+    }
 
     const updated = [newUser, ...users];
     saveUsers(updated);
