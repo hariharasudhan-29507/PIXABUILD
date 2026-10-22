@@ -1,0 +1,218 @@
+{
+  "pixa-sofa-1": {
+    "name": "Astrid Textured Linen 3-Seat Sofa",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_1.png"
+  },
+  "pixa-sofa-2": {
+    "name": "S\u00f6der Low-Profile Modular Sofa",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_2.png"
+  },
+  "pixa-sofa-3": {
+    "name": "P\u00e4rup Architectural Loveseat",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_3.png"
+  },
+  "pixa-sofa-4": {
+    "name": "Ektorp Deep Curved Armchair",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_4.png"
+  },
+  "pixa-sofa-5": {
+    "name": "Vimle Lowline Chaise Sectional",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_5.png"
+  },
+  "pixa-sofa-6": {
+    "name": "Gr\u00f6nlid Reclining Sectional Sofa",
+    "category": "Sofa",
+    "image": "frontend/public/catalog/sofa_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/sofa_6.png"
+  },
+  "pixa-coffee_table-1": {
+    "name": "Lack Minimalist Low Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_1.png"
+  },
+  "pixa-coffee_table-2": {
+    "name": "Havsta Hand-Stained Pine Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_2.png"
+  },
+  "pixa-coffee_table-3": {
+    "name": "Lisabo Sculptural Ash Coffee Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_3.png"
+  },
+  "pixa-coffee_table-4": {
+    "name": "Hemnes Storage Timber Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_4.png"
+  },
+  "pixa-coffee_table-5": {
+    "name": "Fj\u00e4llbo Industrial Oak Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_5.png"
+  },
+  "pixa-coffee_table-6": {
+    "name": "Kragsta Circular Nesting Table",
+    "category": "Coffee Table",
+    "image": "frontend/public/catalog/coffee_table_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/coffee_table_6.png"
+  },
+  "pixa-dining_chair-1": {
+    "name": "Ingolf Solid Timber Dining Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_1.png"
+  },
+  "pixa-dining_chair-2": {
+    "name": "Bergmund Tailored Linen Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_2.png"
+  },
+  "pixa-dining_chair-3": {
+    "name": "Stefan Minimal Solid Pine Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_3.png"
+  },
+  "pixa-dining_chair-4": {
+    "name": "Ekedalen Solid Oak Dining Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_4.png"
+  },
+  "pixa-dining_chair-5": {
+    "name": "Tobias Translucent Sculptural Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_5.png"
+  },
+  "pixa-dining_chair-6": {
+    "name": "Volfgang Chrome Base Chair",
+    "category": "Dining Chair",
+    "image": "frontend/public/catalog/dining_chair_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/dining_chair_6.png"
+  },
+  "pixa-office_desk-1": {
+    "name": "Micke Studio Compact Workstation",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_1.png"
+  },
+  "pixa-office_desk-2": {
+    "name": "Bekant Architectural Corner Workstation",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_2.png"
+  },
+  "pixa-office_desk-3": {
+    "name": "Alex Minimal Double Drawer Desk",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_3.png"
+  },
+  "pixa-office_desk-4": {
+    "name": "Malm Clean Floating Workstation",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_4.png"
+  },
+  "pixa-office_desk-5": {
+    "name": "Trotten Precision Standing Desk",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_5.png"
+  },
+  "pixa-office_desk-6": {
+    "name": "Kullaberg Industrial Pine Desk",
+    "category": "Office Desk",
+    "image": "frontend/public/catalog/office_desk_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/office_desk_6.png"
+  },
+  "pixa-display_cabinet-1": {
+    "name": "Billy Architectural Bookcase & Vitrine",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_1.png"
+  },
+  "pixa-display_cabinet-2": {
+    "name": "Fabrik\u00f6r Curved Metal Glass Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_2.png"
+  },
+  "pixa-display_cabinet-3": {
+    "name": "Rudsta Fluted Metal Wall Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_3.png"
+  },
+  "pixa-display_cabinet-4": {
+    "name": "Milsbo Tall Gallery Showcase",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_4.png"
+  },
+  "pixa-display_cabinet-5": {
+    "name": "Brimnes 2-Door Fluted Cabinet",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_5.png"
+  },
+  "pixa-display_cabinet-6": {
+    "name": "Regiss\u00f6r Solid Wood Display Vitrine",
+    "category": "Display Cabinet",
+    "image": "frontend/public/catalog/display_cabinet_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/display_cabinet_6.png"
+  },
+  "pixa-bed_frame-1": {
+    "name": "Malm Low Platform Bedstead",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_1.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_1.png"
+  },
+  "pixa-bed_frame-2": {
+    "name": "Hemnes Solid Pine Bed Frame",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_2.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_2.png"
+  },
+  "pixa-bed_frame-3": {
+    "name": "Brimnes Integrated Storage Bed Frame",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_3.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_3.png"
+  },
+  "pixa-bed_frame-4": {
+    "name": "Nordli Multi-Drawer Platform Bed",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_4.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_4.png"
+  },
+  "pixa-bed_frame-5": {
+    "name": "Sl\u00e4kt Minimal Bedstead with Daybed Base",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_5.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_5.png"
+  },
+  "pixa-bed_frame-6": {
+    "name": "Songesand Classic Ash Bedstead",
+    "category": "Bed Frame",
+    "image": "frontend/public/catalog/bed_frame_6.jpg",
+    "cutout": "frontend/public/catalog/cutouts/bed_frame_6.png"
+  }
+}

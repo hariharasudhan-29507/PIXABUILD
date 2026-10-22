@@ -1,3 +1,7 @@
+# Never ignore frontend source code
+!frontend/src/data/
+!frontend/src/lib/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -6,16 +10,22 @@ __pycache__/
 # C extensions
 *.so
 
+# PixaBuild large data folders
+/data/
+catalog/images/
+models/
+outputs/
+
 # Distribution / packaging
 .Python
-build/
+/build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -216,3 +226,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+ikea_dataset_repo/
+frontend/.next/
+frontend/node_modules/
+
+results/
+assets/New folder/

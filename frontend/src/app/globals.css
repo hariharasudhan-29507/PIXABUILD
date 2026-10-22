@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Comfortaa:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fjalla+One&family=Lexend:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Warm Restrained Scandinavian Luxury Palette (Awwwards Creative Spec) */
+  --color-warm-ivory: #F6F3ED;       /* Main background */
+  --color-chalk-white: #FCFBF8;      /* Clean card and surface highlights */
+  --color-sandstone: #E5DDD0;        /* Secondary panels and shelves */
+  --color-sand-beige: #E5DDD0;       /* Backward compatibility */
+  --color-muted-taupe: #8A7867;      /* Secondary accents and metadata */
+  --color-deep-charcoal: #292B26;    /* High contrast text and structural lines */
+  --color-forest-charcoal: #292B26;  /* Backward compatibility */
+  --color-forest-olive: #42483A;     /* Primary interactive accent */
+  --color-sage-green: #818773;       /* Secondary botanical tone */
+  --color-sage: #818773;
+  --color-terracotta: #B8795C;       /* Warm architectural highlight */
+  --color-white: #FFFFFF;
+  --border-subtle: #DCD6CB;
+  --border-fine: #DCD6CB;
+  --border-strong: rgba(41, 43, 38, 0.28);
+
+  /* Semantic UI Tokens */
+  --bg-canvas: #F6F3ED;
+  --bg-surface: #E5DDD0;
+  --bg-card: #FCFBF8;
+  --text-primary: #292B26;
+  --text-secondary: #8A7867;
+  --accent-primary: #42483A;
+  --accent-hover: #33382D;
+  --accent-highlight: #B8795C;
+
+  /* Typography Stacks */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-heading: 'Fjalla One', 'Cormorant Garamond', sans-serif;
+  --font-sub: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Comfortaa', cursive, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sub);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial Serif Headings */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+.font-brand {
+  font-family: 'Bodoni Moda', Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+.font-body {
+  font-family: var(--font-sub);
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+/* Button & interactive tactile feedback */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  background-color: var(--color-forest-charcoal);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background-color: #1E221C;
+  transform: translateY(-1px);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-forest-charcoal);
+  outline-offset: 2px;
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-forest-charcoal);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  background-color: var(--color-sand-beige);
+  border-color: var(--color-forest-charcoal);
+}
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-sage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  border-radius: 6px;
+  background-color: var(--color-sage-green);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms ease-out;
+  text-decoration: none;
+}
+.btn-sage:hover {
+  background-color: var(--accent-hover);
+}
+.btn-sage:active {
+  transform: scale(0.98);
+}
+
+.btn-terracotta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sub);
+  border-radius: 6px;
+  background-color: var(--color-terracotta);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 160ms ease-out;
+  text-decoration: none;
+}
+.btn-terracotta:hover {
+  filter: brightness(1.08);
+}
+.btn-terracotta:active {
+  transform: scale(0.98);
+}
+
+/* Card standards */
+.pixa-card {
+  background-color: var(--color-sand-beige);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+.pixa-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-warm-ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-taupe);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-forest-charcoal);
+}
+
+/* 3D FAQ Marquee Keyframes for Auth Backgrounds - Mathematically Seamless 60fps Loop */
+@keyframes marqueeInfiniteUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes marqueeInfiniteDown {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-marquee-infinite-up {
+  animation: marqueeInfiniteUp 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-down {
+  animation: marqueeInfiniteDown 48s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-up-slow {
+  animation: marqueeInfiniteUp 54s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite-down-slow {
+  animation: marqueeInfiniteDown 50s linear infinite;
+  will-change: transform;
+}
