@@ -1,0 +1,13 @@
+torch
+diffusers>=0.30.0
+transformers
+accelerate
+invisible-watermark>=0.2.0
+safetensors
+protobuf
+sentencepiece
+spaces
+pillow
+numpy
+fastapi
+python-multipart

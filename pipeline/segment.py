@@ -8,8 +8,28 @@ class RoomSegmenter:
     Includes adaptive floor-plane extraction and fallback mask generation.
     """
     def __init__(self, checkpoint_path=None):
+        if checkpoint_path is None:
+            # Check default model directory candidates
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            candidates = [
+                os.path.join(base_dir, "models", "sam_vit_b_01ec64.pth"),
+                os.path.join("models", "sam_vit_b_01ec64.pth"),
+                os.path.join(base_dir, "models", "mobile_sam.pt"),
+                os.path.join("models", "mobile_sam.pt"),
+            ]
+            for c in candidates:
+                if os.path.exists(c):
+                    size = os.path.getsize(c)
+                    # Only bind if checkpoint file has fully completed downloading
+                    if "vit_b" in c and size >= 350 * 1024 * 1024:
+                        checkpoint_path = c
+                        break
+                    elif "mobile_sam" in c and size >= 38 * 1024 * 1024:
+                        checkpoint_path = c
+                        break
+
         self.checkpoint_path = checkpoint_path
-        self.model = None
+        self.predictor = None
         self._load_model()
 
     def _load_model(self):
@@ -18,10 +38,13 @@ class RoomSegmenter:
                 import torch
                 from segment_anything import sam_model_registry, SamPredictor
                 device = "cuda" if torch.cuda.is_available() else "cpu"
-                sam = sam_model_registry["vit_b"](checkpoint=self.checkpoint_path)
+                model_type = "vit_b" if "vit_b" in self.checkpoint_path else "vit_t"
+                if model_type not in sam_model_registry:
+                    model_type = "vit_b"
+                sam = sam_model_registry[model_type](checkpoint=self.checkpoint_path)
                 sam.to(device=device)
                 self.predictor = SamPredictor(sam)
-                print("[SAM] Segment Anything Model loaded successfully.")
+                print(f"[SAM] Segment Anything Model ({model_type}) loaded successfully on {device} from {self.checkpoint_path}.")
             except Exception as e:
                 print(f"[SAM] Warning: Could not initialize torch SAM ({e}). Using adaptive mask engine.")
                 self.predictor = None

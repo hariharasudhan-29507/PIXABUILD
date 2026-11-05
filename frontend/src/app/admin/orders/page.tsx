@@ -21,7 +21,7 @@ interface AdminOrder {
   date: string;
   total: number;
   itemsCount: number;
-  status: "Confirmed" | "In Transit" | "Delivered" | "Cancelled";
+  status: "pending" | "Confirmed" | "Dispatched" | "In Transit" | "Delivered" | "Cancelled";
   shipping_city: string;
   customer_name?: string;
   customer_email?: string;
@@ -149,10 +149,22 @@ export default function AdminOrdersPage() {
 
   const getStatusBadge = (status: AdminOrder["status"]) => {
     switch (status) {
+      case "pending":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200">
+            <Clock className="w-3 h-3" /> Pending
+          </span>
+        );
       case "Confirmed":
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
             <Clock className="w-3 h-3" /> Confirmed
+          </span>
+        );
+      case "Dispatched":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <Truck className="w-3 h-3" /> Dispatched
           </span>
         );
       case "In Transit":
@@ -171,6 +183,12 @@ export default function AdminOrdersPage() {
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-rose-50 text-rose-700 border border-rose-200">
             <XCircle className="w-3 h-3" /> Cancelled
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 border border-gray-200">
+            {status}
           </span>
         );
     }
@@ -307,7 +325,9 @@ export default function AdminOrdersPage() {
                           }
                           className="px-2 py-1 bg-[#F7F5F0] border border-[#E6DFD2] rounded text-[11px] font-medium text-[#30352D] focus:outline-none"
                         >
+                          <option value="pending">Pending</option>
                           <option value="Confirmed">Confirmed</option>
+                          <option value="Dispatched">Dispatched</option>
                           <option value="In Transit">In Transit</option>
                           <option value="Delivered">Delivered</option>
                           <option value="Cancelled">Cancelled</option>

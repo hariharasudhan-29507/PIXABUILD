@@ -11,7 +11,10 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Heart,
+  ArrowUpDown,
+  Tag
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -23,13 +26,19 @@ import { formatINR } from "@/lib/format";
 
 const ITEMS_PER_PAGE = 8; // 4 columns x 2 rows = 8 items per page
 
+type SortOption = "featured" | "price-asc" | "price-desc" | "name";
+
 export default function CatalogPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [sortBy, setSortBy] = useState<SortOption>("featured");
+  const [saleOnly, setSaleOnly] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [recommendations, setRecommendations] = useState<RecommendationResult[]>([]);
   const [addedItem, setAddedItem] = useState<string | null>(null);
+  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Read URL query params on mount & handle focus
@@ -40,7 +49,10 @@ export default function CatalogPage() {
       const cat = params.get("category");
       const shouldFocus = params.get("focusSearch") === "true";
 
-      if (q) setSearchTerm(q);
+      if (q) {
+        setSearchTerm(q);
+        setDebouncedSearch(q);
+      }
       if (cat) setActiveCategory(cat);
 
       if (shouldFocus) {
@@ -55,17 +67,47 @@ export default function CatalogPage() {
     }
   }, []);
 
-  // Load search history and ML recommendations on mount
+  // Load search history, ML recommendations, and wishlist on mount
   useEffect(() => {
     const history = getSearchHistory();
     setSearchHistory(history);
     const recs = getRecommendations(history);
     setRecommendations(recs);
+
+    try {
+      const rawWish = localStorage.getItem("pixabuild_wishlist");
+      if (rawWish) setWishlistIds(JSON.parse(rawWish));
+    } catch {}
+
+    const handleWishlistUpdate = () => {
+      try {
+        const rawWish = localStorage.getItem("pixabuild_wishlist");
+        if (rawWish) setWishlistIds(JSON.parse(rawWish));
+      } catch {}
+    };
+    window.addEventListener("wishlist_updated", handleWishlistUpdate);
+    return () => window.removeEventListener("wishlist_updated", handleWishlistUpdate);
   }, []);
+
+  // Timed search debounce: waits 300ms after user stops typing to avoid redundant processing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      if (searchTerm.trim().length >= 2) {
+        saveSearchQuery(searchTerm, activeCategory);
+        const updated = getSearchHistory();
+        setSearchHistory(updated);
+        setRecommendations(getRecommendations(updated));
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, activeCategory]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
+    setDebouncedSearch(searchTerm);
     saveSearchQuery(searchTerm, activeCategory);
     const updated = getSearchHistory();
     setSearchHistory(updated);
@@ -75,6 +117,7 @@ export default function CatalogPage() {
 
   const handleSelectHistoryPill = (query: string) => {
     setSearchTerm(query);
+    setDebouncedSearch(query);
     saveSearchQuery(query, activeCategory);
     const updated = getSearchHistory();
     setSearchHistory(updated);
@@ -82,47 +125,76 @@ export default function CatalogPage() {
     setCurrentPage(1);
   };
 
+  const toggleWishlist = (itemId: string) => {
+    try {
+      let list = [...wishlistIds];
+      if (list.includes(itemId)) {
+        list = list.filter((id) => id !== itemId);
+        recordActivity("REMOVED_FROM_WISHLIST", { item_id: itemId });
+      } else {
+        list.push(itemId);
+        recordActivity("ADDED_TO_WISHLIST", { item_id: itemId });
+      }
+      setWishlistIds(list);
+      localStorage.setItem("pixabuild_wishlist", JSON.stringify(list));
+      window.dispatchEvent(new Event("wishlist_updated"));
+    } catch (err) {
+      console.error("Wishlist toggle error", err);
+    }
+  };
+
   // Determine if this is a new user (no search history)
   const isNewUser = searchHistory.length === 0;
 
-  // Single unified product list: Recommended items first, others below, NO repetition
+  // Single unified product list with category filtering, search, sale toggle, and price sorting
   const { filteredItems, recommendedIds } = useMemo(() => {
     const base = FURNITURE_CATALOG.filter((item) => {
       const matchesCategory =
         activeCategory === "All" || item.category.toLowerCase() === activeCategory.toLowerCase();
-      const query = searchTerm.toLowerCase().trim();
+      const query = debouncedSearch.toLowerCase().trim();
       const matchesSearch =
         !query ||
         item.name.toLowerCase().includes(query) ||
         item.color.toLowerCase().includes(query) ||
         item.material.toLowerCase().includes(query) ||
         item.tags.some((t) => t.toLowerCase().includes(query));
-      return matchesCategory && matchesSearch;
+      const matchesSale = !saleOnly || item.is_sale;
+      return matchesCategory && matchesSearch && matchesSale;
     });
 
     const recIds = new Set<string>();
 
-    // For new users or when no recommendations exist: return standard list
-    if (isNewUser || recommendations.length === 0) {
-      return { filteredItems: base, recommendedIds: recIds };
+    let list: FurnitureItem[];
+    if (sortBy === "featured") {
+      if (isNewUser || recommendations.length === 0) {
+        list = base;
+      } else {
+        recommendations.forEach((r) => recIds.add(r.item.item_id));
+        const recommendedList = base.filter((item) => recIds.has(item.item_id));
+        const remainingList = base.filter((item) => !recIds.has(item.item_id));
+        list = [...recommendedList, ...remainingList];
+      }
+    } else {
+      list = [...base];
+      if (sortBy === "price-asc") {
+        list.sort((a, b) => (a.sale_price || a.price) - (b.sale_price || b.price));
+      } else if (sortBy === "price-desc") {
+        list.sort((a, b) => (b.sale_price || b.price) - (a.sale_price || a.price));
+      } else if (sortBy === "name") {
+        list.sort((a, b) => a.name.localeCompare(b.name));
+      }
     }
 
-    // Returning user: Recommended pieces on TOP, other items on bottom, zero repetition
-    recommendations.forEach((r) => recIds.add(r.item.item_id));
-
-    const recommendedList = base.filter((item) => recIds.has(item.item_id));
-    const remainingList = base.filter((item) => !recIds.has(item.item_id));
-
     return {
-      filteredItems: [...recommendedList, ...remainingList],
+      filteredItems: list,
       recommendedIds: recIds,
     };
-  }, [searchTerm, activeCategory, isNewUser, recommendations]);
+  }, [debouncedSearch, activeCategory, saleOnly, sortBy, isNewUser, recommendations]);
 
-  // Reset page when category or search changes
+  // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, activeCategory]);
+  }, [debouncedSearch, activeCategory, saleOnly, sortBy]);
 
   // Pagination calculation
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
@@ -161,10 +233,11 @@ export default function CatalogPage() {
     }
   };
 
-  // Render individual product card with exact matching dimensions, matching buttons, and clean spacing
+  // Render individual product card with Stage in Room, Add to Cart, and Wishlist
   const renderProductCard = (item: FurnitureItem) => {
     const isAdded = addedItem === item.item_id;
-    const isRecommended = recommendedIds.has(item.item_id) && !isNewUser;
+    const isWishlisted = wishlistIds.includes(item.item_id);
+    const isRecommended = recommendedIds.has(item.item_id) && !isNewUser && sortBy === "featured";
 
     return (
       <div
@@ -172,7 +245,7 @@ export default function CatalogPage() {
         className="pixa-card bg-[var(--color-sand-beige)] border-[var(--border-subtle)] flex flex-col justify-between h-full p-5 rounded-2xl group transition-shadow hover:shadow-md"
       >
         <div>
-          {/* Image Container: Pure white studio mockup background, fills inner rounded rectangle */}
+          {/* Image Container with Wishlist Button and Badges */}
           <div className="relative h-60 w-full rounded-xl bg-white overflow-hidden flex items-center justify-center border border-[var(--border-subtle)] p-2">
             <img
               src={item.image_url}
@@ -185,10 +258,23 @@ export default function CatalogPage() {
               </span>
             )}
             {isRecommended && (
-              <span className="absolute top-2.5 right-2.5 bg-[#42483A] text-white text-[10px] font-accent uppercase tracking-wider font-semibold px-2 py-0.5 rounded shadow-xs">
+              <span className="absolute top-2.5 left-2.5 bg-[#42483A] text-white text-[10px] font-accent uppercase tracking-wider font-semibold px-2 py-0.5 rounded shadow-xs">
                 Recommended
               </span>
             )}
+            {/* Wishlist Heart Toggle */}
+            <button
+              type="button"
+              onClick={() => toggleWishlist(item.item_id)}
+              className={`absolute top-2.5 right-2.5 h-8 w-8 rounded-full border flex items-center justify-center transition-colors shadow-xs ${
+                isWishlisted
+                  ? "bg-red-50 border-red-300 text-red-600"
+                  : "bg-white/90 border-[#DCD6CB] text-[#74736B] hover:text-[#30352D] hover:bg-white"
+              }`}
+              title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
+            >
+              <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+            </button>
           </div>
 
           {/* Metadata */}
@@ -219,7 +305,7 @@ export default function CatalogPage() {
           </div>
         </div>
 
-        {/* Price & Actions: Stacked cleanly, zero overlap */}
+        {/* Price & Actions: Stacked cleanly with Stage in Room and Add to Cart */}
         <div className="mt-5 pt-3 border-t border-[var(--border-subtle)]">
           {/* Dedicated Price Row */}
           <div className="flex items-baseline justify-between gap-2 min-h-[28px]">
@@ -239,23 +325,26 @@ export default function CatalogPage() {
                 </span>
               )}
             </div>
+            <span className="text-[10px] text-[var(--color-muted-taupe)] font-mono">
+              {item.dimensions}
+            </span>
           </div>
 
-          {/* Equal Sized Action Buttons Grid (Identical height h-10 and equal width) */}
+          {/* Equal Sized Action Buttons Grid: Stage in Room and Add to Cart */}
           <div className="grid grid-cols-2 gap-2 mt-3">
             <Link
               href={`/visualize?item=${item.item_id}`}
-              className="h-10 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] hover:bg-white text-[var(--color-forest-charcoal)] text-xs font-medium flex items-center justify-center gap-1.5 transition-colors shadow-xs"
-              title="Check fit in room"
+              className="h-10 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] hover:bg-white text-[var(--color-forest-charcoal)] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              title="Stage in Room using spatial visualization"
             >
-              <Eye className="h-4 w-4 shrink-0" />
-              <span className="truncate">In Room</span>
+              <Eye className="h-4 w-4 shrink-0 text-[#8C7965]" />
+              <span className="truncate">Stage in Room</span>
             </Link>
             <button
               type="button"
               onClick={() => handleAddToCart(item)}
               className="h-10 w-full rounded-lg bg-[var(--color-forest-charcoal)] hover:bg-[#1A1D18] text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors shadow-xs"
-              title="Add to Cart"
+              title="Add to Shopping Cart"
             >
               {isAdded ? (
                 <>
@@ -265,7 +354,7 @@ export default function CatalogPage() {
               ) : (
                 <>
                   <ShoppingBag className="h-4 w-4 shrink-0" />
-                  <span className="truncate">Buy</span>
+                  <span className="truncate">Add to Cart</span>
                 </>
               )}
             </button>
@@ -288,34 +377,71 @@ export default function CatalogPage() {
             </h1>
           </div>
 
-          {/* Clean Search Bar */}
+          {/* Search Bar, Price Sort & Sale Toggle Controls */}
           <div className="mb-8 space-y-4">
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2.5 w-full max-w-sm sm:max-w-md">
-              <div className="relative flex-1 flex items-center">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-taupe)]" />
-                <input
-                  id="catalog-search-input"
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="start searching"
-                  className="w-full h-10 rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-10 pr-9 text-xs text-[var(--color-forest-charcoal)] placeholder-[var(--color-muted-taupe)]/60 focus:border-[var(--color-sage-green)] focus:outline-none"
-                />
-                {searchTerm && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-taupe)] hover:text-[var(--color-forest-charcoal)]"
-                    title="Clear search"
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Clean Timed Search Bar */}
+              <form onSubmit={handleSearchSubmit} className="flex items-center gap-2.5 w-full max-w-sm sm:max-w-md">
+                <div className="relative flex-1 flex items-center">
+                  <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-taupe)]" />
+                  <input
+                    id="catalog-search-input"
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search catalog by piece, wood, fabric..."
+                    className="w-full h-10 rounded-lg border border-[var(--border-strong)] bg-[var(--color-warm-ivory)] pl-10 pr-9 text-xs text-[var(--color-forest-charcoal)] placeholder-[var(--color-muted-taupe)]/60 focus:border-[var(--color-sage-green)] focus:outline-none"
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-taupe)] hover:text-[var(--color-forest-charcoal)]"
+                      title="Clear search"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+                <button type="submit" className="btn-primary h-10 text-xs px-5 flex items-center justify-center shrink-0">
+                  Search
+                </button>
+              </form>
+
+              {/* Price Sort & Sale Toggle */}
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Sale Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setSaleOnly(!saleOnly)}
+                  className={`h-10 px-3.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-colors ${
+                    saleOnly
+                      ? "bg-[var(--color-terracotta)] text-white border-[var(--color-terracotta)] shadow-xs"
+                      : "bg-[var(--color-warm-ivory)] text-[var(--color-forest-charcoal)] border-[var(--border-subtle)] hover:bg-white"
+                  }`}
+                  title="Toggle Sale Items Only"
+                >
+                  <Tag className="h-3.5 w-3.5" />
+                  <span>Sale Only</span>
+                </button>
+
+                {/* Price Sort Dropdown */}
+                <div className="relative flex items-center">
+                  <ArrowUpDown className="pointer-events-none absolute left-3 h-3.5 w-3.5 text-[var(--color-muted-taupe)]" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                    className="h-10 pl-8 pr-8 rounded-lg border border-[var(--border-subtle)] bg-[var(--color-warm-ivory)] text-xs text-[var(--color-forest-charcoal)] font-medium focus:outline-none hover:bg-white cursor-pointer appearance-none"
+                    title="Sort products"
                   >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
+                    <option value="featured">Sort: Featured / Recommendations</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name">Product Name (A - Z)</option>
+                  </select>
+                </div>
               </div>
-              <button type="submit" className="btn-primary h-10 text-xs px-5 flex items-center justify-center shrink-0">
-                Search
-              </button>
-            </form>
+            </div>
 
             {/* Search History Pills (Saved searches) */}
             {searchHistory.length > 0 && (
@@ -337,7 +463,7 @@ export default function CatalogPage() {
             )}
           </div>
 
-          {/* Category Tabs */}
+          {/* Six Category Pills */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 mb-8">
             {CATEGORIES.map((cat) => (
               <button
@@ -355,7 +481,7 @@ export default function CatalogPage() {
             ))}
           </div>
 
-          {/* Main Furniture Catalog Grid: Exactly 4 products per row (4 columns), Recommended on top, No duplicates */}
+          {/* Main Furniture Catalog Grid: Exactly 4 products per row (4 columns) */}
           <div id="catalog-section" className="scroll-mt-6">
             {filteredItems.length === 0 ? (
               <div className="text-center py-16 bg-[var(--color-sand-beige)] rounded-2xl border border-[var(--border-subtle)] my-4">
@@ -369,6 +495,8 @@ export default function CatalogPage() {
                   onClick={() => {
                     setSearchTerm("");
                     setActiveCategory("All");
+                    setSaleOnly(false);
+                    setSortBy("featured");
                   }}
                   className="btn-primary text-xs px-4 py-2 mt-4"
                 >
@@ -376,7 +504,6 @@ export default function CatalogPage() {
                 </button>
               </div>
             ) : paginatedItems.length === 1 ? (
-              /* If a single product, center the product */
               <div className="flex justify-center w-full py-4">
                 <div className="w-full max-w-sm">
                   {renderProductCard(paginatedItems[0])}

@@ -13,8 +13,8 @@ class DepthEstimator:
         self._load_model()
 
     def _load_model(self):
-        # Only attempt to load large Hugging Face weights if explicitly enabled and GPU is available
-        enable_heavy = os.getenv("ENABLE_NEURAL_MODELS", "false").lower() == "true"
+        # Enable neural model loading by default (user requirement: real neural models, no compromisation)
+        enable_heavy = os.getenv("ENABLE_NEURAL_MODELS", "true").lower() == "true"
         if not enable_heavy:
             print("[DepthAnything] Low-memory mode active (< 50MB RAM). Using spatial gradient engine.")
             self.pipe = None
@@ -24,10 +24,16 @@ class DepthEstimator:
             from transformers import pipeline
             import torch
             device = 0 if torch.cuda.is_available() else -1
-            self.pipe = pipeline(task="depth-estimation", model="depth-anything/Depth-Anything-V2-Small-hf", device=device)
-            print("[DepthAnything] Model initialized.")
+
+            # Check local downloaded weights first, then fall back to HF repo
+            local_model_path = os.path.join(os.path.dirname(__file__), "..", "models", "depth_anything_v2_small")
+            local_model_path = os.path.abspath(local_model_path)
+            model_id = local_model_path if os.path.exists(os.path.join(local_model_path, "model.safetensors")) else "depth-anything/Depth-Anything-V2-Small-hf"
+
+            self.pipe = pipeline(task="depth-estimation", model=model_id, device=device)
+            print(f"[DepthAnything] Neural pipeline initialized from {model_id}.")
         except Exception as e:
-            print(f"[DepthAnything] Transformers pipeline unavailable ({e}). Using spatial gradient engine.")
+            print(f"[DepthAnything] Transformers pipeline deferred ({e}). Fallback gradient active.")
             self.pipe = None
 
     def estimate_depth(self, image_path_or_pil):

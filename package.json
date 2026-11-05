@@ -1,0 +1,10 @@
+{
+  "name": "pixabuild",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "start": "node scripts/dev.js",
+    "build": "cd frontend && npm run build"
+  }
+}
