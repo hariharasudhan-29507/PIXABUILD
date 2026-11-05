@@ -3,12 +3,12 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Shield, KeyRound, User, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { KeyRound, User, ArrowRight, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Faq3DMarquee } from "@/components/Faq3DMarquee";
-import { signInWithSupabase, setCurrentUser, DEFAULT_ADMIN } from "@/lib/supabase";
+import { signInWithSupabase } from "@/lib/supabase";
 
 const loginSchema = z.object({
   identifier: z.string().min(2, "Username or email must be at least 2 characters"),
@@ -26,17 +26,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [userNotFoundModal, setUserNotFoundModal] = useState(false);
-
-  const fillAdmin = () => {
-    setIdentifier("admin");
-    setPassword("admin123");
-    setErrors({});
-  };
-
-  const handleDemoAdmin = () => {
-    setCurrentUser(DEFAULT_ADMIN);
-    router.push("/admin/dashboard");
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,25 +155,6 @@ function LoginForm() {
           )}
         </button>
       </form>
-
-      <div className="relative my-5">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[#DCD6CB]" />
-        </div>
-        <div className="relative flex justify-center text-[10px] uppercase tracking-wider text-[#8A7867]">
-          <span className="bg-[#FCFBF8] px-2 font-medium">Evaluation Access</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleDemoAdmin}
-        className="w-full py-2.5 px-4 rounded-lg border border-[#8C7965]/40 bg-[#F0ECE1] hover:bg-[#E5DDD0] text-[#30352D] text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-xs"
-        title="One-click administrator access for evaluation"
-      >
-        <Shield className="h-4 w-4 text-[#8C7965]" />
-        <span>Sign in as Demo Admin</span>
-      </button>
 
       <div className="mt-6 pt-4 border-t border-[#DCD6CB] text-center text-xs text-[#6B655C]">
         <span>Don&apos;t have an account? </span>
