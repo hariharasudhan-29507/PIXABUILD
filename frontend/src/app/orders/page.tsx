@@ -32,10 +32,10 @@ export default function OrdersPage() {
           {
             order_id: "SE-498210",
             date: "Oct 18, 2026",
-            total: 1048.00,
-            itemsCount: 2,
-            status: "In Transit",
-            shipping_city: "Copenhagen",
+            total: 42400.00,
+            itemsCount: 1,
+            status: "Dispatched",
+            shipping_city: "Bengaluru",
           },
         ];
         setOrders(seed);

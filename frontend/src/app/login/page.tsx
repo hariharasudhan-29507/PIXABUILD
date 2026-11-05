@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Shield, KeyRound, User, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { KeyRound, User, ArrowRight, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -26,12 +26,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [userNotFoundModal, setUserNotFoundModal] = useState(false);
-
-  const fillAdmin = () => {
-    setIdentifier("admin");
-    setPassword("admin123");
-    setErrors({});
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
